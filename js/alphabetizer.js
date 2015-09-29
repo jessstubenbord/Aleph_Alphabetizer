@@ -66,7 +66,7 @@ var displayItems = function() {
 	}
 	if (deleteOnClick === true) {
 		$list.addClass("deletable");
-		deleteFunc();//run the delete function
+		deleteFunction();//run the delete function
 		//figure out how to stop the delete function
 	};
 
@@ -105,12 +105,15 @@ $('.css-input').on('keyup', function (event) { // listen to each keypress in the
 
 });
 
-var deleteFunc = function(){
+var deleteFunction = function(){
 //delete items from array
  $('ul.list').on('click', 'li', function () {
+
  	////save text from item
+    var arrayPosition = $(this).attr('class');
+    items[arrayPosition] = " ";//replace it with a blank space
  	$(this).empty(); //make it dissapear
- 	$(this).html('<a href="#undid">undo</a>');//add undo link
+ 	//$(this).html('<a href="#undid">undo</a>');//add undo link
  	//remove from array
 
     });
