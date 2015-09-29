@@ -6,6 +6,11 @@
 //clearing all items
 //more things
 
+//string logic
+///tolowercase
+///check for returns
+
+
 var alphabetizeOn = true;
 var instantEntry = true;
 var deleteOnClick = false;
@@ -86,9 +91,17 @@ $('.css-input').on('keyup', function (event) { // listen to each keypress in the
     	$('.css-input').addClass('multi-entry');			//Activate multi-entry mode
     	multiEntry = true;
     }
+    if (event.which === 27) {             // if escape is pressed
+        $('.css-input').removeClass('multi-entry');            //de-activate multi-entry mode
+        multiEntry = false;
+        var $input = $(event.target);     // take the reference to the inputbox
+        $input.val('');               // clear the input box
+    }
+
     else{
     	displayItems();
     }
+
 
 });
 
