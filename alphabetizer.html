@@ -16,8 +16,14 @@
   color: #CCCCCC;
 }
 button {
+  background-color: #ECECEC;
+  color: #000;
+  border: 1px solid #CCC;
   padding: 5px 10px;
   margin-left: 4px;
+}
+button:hover, button:focus {
+  background-color: #FF7474; 
 }
 .css-input { 
   border-width:2px; 
@@ -31,13 +37,25 @@ button {
   max-width: 90%;  
 } 
 .css-input:focus { 
-  outline:none; 
+  outline:none;
+  border-top: 2px solid #fff;
+  border-right: 2px solid #fff;
+  border-left:2px solid #fff; 
 }
 .css-input.multi-entry { 
   height: 131px;
   width: 100%;
   max-width: 90%;  
+}
+.css-input.multi-entry:focus {
+  border: 2px solid #ccc; 
 } 
+p.hint {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #717070;
+}
 ul.alphabet {
   list-style: none;
   font-size: 22px;
@@ -88,6 +106,7 @@ ul.list.deletable li:hover{
   <div class="large-8 large-offset-2 columns text-center">
     <h1>Alphabetizer</h1>
     <textarea class="css-input" placeholder="Enter text here...."></textarea>
+    <p class="hint"> Hint: try hitting shift + enter to enter multiple items</p>
   </div>
 </div>
 
@@ -101,7 +120,7 @@ ul.list.deletable li:hover{
     <label><input type="checkbox" class="deletable-box" name="box1" value="first_checkbox"> deletable items</label><br>
     <label><input type="checkbox" class="alphabet-box" name="box1" value="second_checkbox"> alphabetize</label><br>
     <label><input type="checkbox" class="shuffle-box" name="box1" value="third_checkbox"> shuffle</label><br>
-    <button>clear entries</button>
+    <button>clear all entries</button>
     <ul class="alphabet">
       <li>A</li>
       <li class="active">B</li>
@@ -150,3 +169,4 @@ ul.list.deletable li:hover{
 <script src="js/alphabetizer.js"></script>
 </body>
 </html>
+

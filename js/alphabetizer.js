@@ -139,6 +139,7 @@ $(".deletable-box").change(function() {
     else{
         deleteOnClick = false;
     }
+    displayItems();
 });
 $(".alphabet-box").change(function() {
     if(this.checked) {
@@ -148,6 +149,7 @@ $(".alphabet-box").change(function() {
     else{
         alphabetizeOn = false;
     }
+    displayItems();
 });
 $(".shuffle-box").change(function() {
     if(this.checked) {
@@ -157,5 +159,6 @@ $(".shuffle-box").change(function() {
     else{
         shuffleData = false;
     }
+    displayItems();
 });
 
