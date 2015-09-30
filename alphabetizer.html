@@ -15,6 +15,10 @@
 .inert{
   color: #CCCCCC;
 }
+button {
+  padding: 5px 10px;
+  margin-left: 4px;
+}
 .css-input { 
   border-width:2px; 
   border-color:#cccccc; 
@@ -37,6 +41,8 @@
 ul.alphabet {
   list-style: none;
   font-size: 22px;
+  max-height: 360px;
+  overflow: auto;
 }
 .alphabet li{
 /*  border-right: 2px solid #ccc;*/
@@ -60,7 +66,7 @@ ul.list.deletable li:hover{
   cursor: pointer;
   color: #FF7474;
 }
-.index, .items {
+.items {
     height: 100%;
     max-height: 450px;
     overflow: auto;
@@ -91,8 +97,12 @@ ul.list.deletable li:hover{
   <hr/>
   </div>
   <div class="index large-2 large-offset-1 columns">
+    + Options<br>
+    <label><input type="checkbox" class="deletable-box" name="box1" value="first_checkbox"> deletable items</label><br>
+    <label><input type="checkbox" class="alphabet-box" name="box1" value="second_checkbox"> alphabetize</label><br>
+    <label><input type="checkbox" class="shuffle-box" name="box1" value="third_checkbox"> shuffle</label><br>
+    <button>clear entries</button>
     <ul class="alphabet">
-      <li>+ Options</li>
       <li>A</li>
       <li class="active">B</li>
       <li class="inert">C</li>

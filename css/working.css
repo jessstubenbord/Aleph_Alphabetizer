@@ -79,15 +79,6 @@ input.submit{
 	display: inline-block;
 }
 
-label {
-  display: block;
-  font-size: 0.77778rem;
-  font-weight: normal;
-  line-height: 1.5;
-  margin-bottom: 0;
-}
-
-
 	footer.row{
 /*		margin-bottom: 50px;
 		font-size: .6em;

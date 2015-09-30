@@ -15,7 +15,7 @@ var alphabetizeOn = true;
 var instantEntry = true;
 var deleteOnClick = false;
 var multiEntry = false;
-var openOptions = false;
+var openOptions = true;
 
 
 var shuffleData = false;
@@ -54,13 +54,21 @@ var displayItems = function() {
 
 	if (alphabetizeOn === true) {
 		items.sort();						//sort items
+        $('.alphabet-box').prop( 'checked', true );
 	};
 	if (shuffleData === true ) {
+        alphabetizeOn = false;              //turn off auto-alphabetize
 		shuffleArray(items);				//shuffle data
+        $('.alphabet-box').prop( 'checked', false );
+        $('.shuffle-box').prop( 'checked', true );
 		if (alwaysShuffleData === false) {
-			shuffleData = false;			//don't shuffle it next time
+			//shuffleData = false;			//don't shuffle it next time
+            //$('.shuffle-box').prop( 'checked', false );
 		};
 	};
+    if (shuffleData === false) {
+        $('.shuffle-box').prop( 'checked', false );
+    };
 	if (multiEntry === true) {
 		//only fires if it's true from the start, not if it's fired by key recognition
 	}
@@ -78,24 +86,24 @@ var displayItems = function() {
 
 
 //grab items from input
-$('.css-input').on('keyup', function (event) { // listen to each keypress in the input box
-    if (event.which === 13 && !event.shiftKey) {             // if enter is pressed
-        var $input = $(event.target);     // take the reference to the inputbox
-        var item = $input.val();      // take the value of the input box 
-        items.push(item);             // add it to the array
-        $input.val('');               // clear the input box
+$('.css-input').on('keyup', function (event) {              // listen to each keypress in the input box
+    if (event.which === 13 && !event.shiftKey) {            // if enter is pressed
+        var $input = $(event.target);                       // take the reference to the inputbox
+        var item = $input.val();                            // take the value of the input box 
+        items.push(item);                                   // add it to the array
+        $input.val('');                                     // clear the input box
 
-        //displayItems();                  // show the words
+        //displayItems();                                   /// show the words
     }
     if (event.which === 13 && event.shiftKey) {             // if enter and shift are pressed
     	$('.css-input').addClass('multi-entry');			//Activate multi-entry mode
     	multiEntry = true;
     }
-    if (event.which === 27) {             // if escape is pressed
-        $('.css-input').removeClass('multi-entry');            //de-activate multi-entry mode
+    if (event.which === 27) {                               // if escape is pressed
+        $('.css-input').removeClass('multi-entry');         //de-activate multi-entry mode
         multiEntry = false;
-        var $input = $(event.target);     // take the reference to the inputbox
-        $input.val('');               // clear the input box
+        var $input = $(event.target);                       // take the reference to the inputbox
+        $input.val('');                                     // clear the input box
     }
 
     else{
@@ -107,15 +115,47 @@ $('.css-input').on('keyup', function (event) { // listen to each keypress in the
 
 var deleteFunction = function(){
 //delete items from array
- $('ul.list').on('click', 'li', function () {
+    if (deleteOnClick === true) {
+        $('ul.list').on('click', 'li', function () {    //on clicking a list item
+            var arrayPosition = $(this).attr('class');  //grab the array position from the class
+            items[arrayPosition] = " ";                 //replace it with a blank space
+            $(this).addClass('inert');
+            //$(this).empty(); //make it dissapear
+            //$(this).html('<a href="#undid">undo</a>');//add undo link
+            //remove from array
+        });
+    }
+    else{
+        $('.list').removeClass('deletable');
+        //stop the delete function
+    };
+};
 
- 	////save text from item
-    var arrayPosition = $(this).attr('class');
-    items[arrayPosition] = " ";//replace it with a blank space
- 	$(this).empty(); //make it dissapear
- 	//$(this).html('<a href="#undid">undo</a>');//add undo link
- 	//remove from array
+//option Checkbox actions
+$(".deletable-box").change(function() {
+    if(this.checked) {
+        deleteOnClick = true;
+    }
+    else{
+        deleteOnClick = false;
+    }
+});
+$(".alphabet-box").change(function() {
+    if(this.checked) {
+        alphabetizeOn = true;
+        shuffleData = false;
+    }
+    else{
+        alphabetizeOn = false;
+    }
+});
+$(".shuffle-box").change(function() {
+    if(this.checked) {
+        shuffleData = true;
+        alphabetizeOn = false
+    }
+    else{
+        shuffleData = false;
+    }
+});
 
-    });
-
-}
