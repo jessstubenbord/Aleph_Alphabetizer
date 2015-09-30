@@ -92,7 +92,9 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     if (event.which === 13 && !event.shiftKey) {            // if enter is pressed
         var $input = $(event.target);                       // take the reference to the inputbox
         var item = $input.val();                            // take the value of the input box 
-        items.push(item);                                   // add it to the array
+        var itemTrimmed = item.trim();                      // trim leading and following white space
+        //var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);
+        items.push(itemTrimmed);                            // add it to the array
         $input.val('');                                     // clear the input box
 
         //displayItems();                                   /// show the words
