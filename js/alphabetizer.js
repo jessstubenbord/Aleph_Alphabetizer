@@ -165,4 +165,8 @@ $(".shuffle-box").change(function() {
     }
     displayItems();
 });
+$(".clear-button").click(function(){
+    items.length = 0;   // clear all data in items array
+    displayItems();
+});
 
