@@ -1,6 +1,6 @@
 //basis of alphabetization code from
 //http://stackoverflow.com/a/25431980
-//http://jsfiddle.net/albertmatyi/avvxuomb/
+//http://stackoverflow.com/a/9645447
 
 // still need to add:
 //clearing all items
@@ -53,7 +53,9 @@ var displayItems = function() {
     var $list = $('.list');       
 
 	if (alphabetizeOn === true) {
-		items.sort();						//sort items
+		items.sort(function (a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });         						//sort items
         $('.alphabet-box').prop( 'checked', true );
 	};
 	if (shuffleData === true ) {
