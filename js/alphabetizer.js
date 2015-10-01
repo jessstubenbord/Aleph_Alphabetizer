@@ -83,7 +83,7 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
         });
         $input.val('');                                     // clear the input box
     }
-    if (event.which === 13 && event.shiftKey) {             // if enter and shift are pressed
+    if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
     	$('.css-input').addClass('multi-entry');			// Activate multi-entry mode
     	multiEntry = true;                                  // switch it on
     }
