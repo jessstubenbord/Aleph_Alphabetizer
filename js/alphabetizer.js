@@ -10,6 +10,9 @@ var shuffleData = false;
 var alwaysShuffleData = false;
 var clearData = false;
 
+var mostRecentItem;
+var mostRecentItemPosition;
+
 var items = new Array();
 
 
@@ -27,11 +30,11 @@ function shuffleArray(array) {
 
 ///check if there are stored items from a previous session and load them into items
 //not currently used
-var replaceSavedItems = function(){
-	if (savedItems === true) {
-		items = savedItems;
-	};
-};
+//var replaceSavedItems = function(){
+//	if (savedItems === true) {
+//		items = savedItems;
+//	};
+//};
 
 
 
@@ -64,28 +67,65 @@ var displayItems = function() {
 		//figure out how to stop the delete function
 	};
 
+    mostRecentItemPosition = items.indexOf(mostRecentItem);
+
     $list.html('');                                                 // clear the last content of .list
     $.each(items, function (indexPosition) {                        // iterate through the list
         $list.append('<li class="' + indexPosition + '">' + this + '</li>'); // append a list item for each
     });
+
+    ///add if statement
+    $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible 
 };
 
+var itemsInArray = 0;
 
 //grab items from input
 $('.css-input').on('keyup', function (event) {              // listen to each keypress in the input box
-    if (event.which === 13 && !event.shiftKey) {            // if just enter is pressed
-        var $input = $(event.target);                       // take the reference to the inputbox
-        var item = $input.val();                            // take the value of the input box 
-        var itemTrimmed = item.trim();                      // trim leading and following white space
-        var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
-        $.each(itemsSplit, function (indexPosition){        // take each split item
-            items.push(itemsSplit[indexPosition]);          // add it to the array
-        });
-        $input.val('');                                     // clear the input box
+//    if (event.which === 13 && !event.shiftKey) {            // if just enter is pressed
+//    console.log('length: ' + items.length + ' in array: ' + itemsInArray);
+//    console.log(items);
+
+    if (items.length > itemsInArray ) {                 // if an item has been added to the array temporarily
+        if (mostRecentItemPosition > -1) {
+            items.splice(mostRecentItemPosition, 1);    // delete it
+        };
+    };
+
+    var $input = $(event.target);                       // take the reference to the inputbox
+    var item = $input.val();                            // take the value of the input box 
+    var itemTrimmed = item.trim();                      // trim leading and following white space
+
+    mostRecentItem = itemTrimmed                        //set most recent item globally
+
+    if (multiEntry === true) {                              // if multi-entry is active
+        if (event.which === 13 && !event.shiftKey) {        //if enter is pressed
+            var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
+            $.merge(items, itemsSplit);                         // add split items to array
+            console.log('pushed: ' + itemsSplit);
+
+            $input.val('');
+            itemsInArray++;
+            console.log('enter')
+        };
     }
+    else{                                               //otherwise
+        items.push(itemTrimmed);                        //just add trimed items
+    }
+
+    if (event.which === 13 && !event.shiftKey) {        //if enter is pressed
+        $input.val('');
+        itemsInArray++;
+        console.log('enter')
+        $('.list' + ' .' + mostRecentItemPosition).removeClass('active');  // remove active class 
+
+    };
+
+//    }
     if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
     	$('.css-input').addClass('multi-entry');			// Activate multi-entry mode
     	multiEntry = true;                                  // switch it on
+        instantEntry = false;                               //turn off instant
     }
     if (event.which === 27) {                               // if escape is pressed
         $('.css-input').removeClass('multi-entry');         // de-activate multi-entry mode
@@ -95,6 +135,8 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     }
     
     displayItems();                                         // display all of the items
+    console.log(items);
+    console.log('-----'); 
 
 });
 

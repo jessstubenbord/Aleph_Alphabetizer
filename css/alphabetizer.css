@@ -133,6 +133,9 @@ ul.list.deletable li:active{
 	text-decoration: line-through;
 	color: #ccc;
 }
+.list li.active{
+	color: #00C3FF;
+}
 
 .items {
     height: 100%;
