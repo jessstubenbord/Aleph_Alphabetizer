@@ -64,8 +64,11 @@ var displayItems = function() {
 	if (deleteOnClick === true) {                                   //if deletable is on
 		$list.addClass("deletable");                                //make things appear deletable
 		deleteFunction();                                           //run the delete function
-		//figure out how to stop the delete function
 	};
+    if (deleteOnClick === false) {                                   //if deletable is on
+        $list.removeClass("deletable").unbind('click');                                //make things appear deletable
+        deleteFunction();                                           //run the delete function
+    };
 
     mostRecentItemPosition = items.indexOf(mostRecentItem);
 
@@ -83,8 +86,8 @@ var itemsInArray = 0;
 //grab items from input
 $('.css-input').on('keyup', function (event) {              // listen to each keypress in the input box
 //    if (event.which === 13 && !event.shiftKey) {            // if just enter is pressed
-//    console.log('length: ' + items.length + ' in array: ' + itemsInArray);
-//    console.log(items);
+    console.log('length: ' + items.length + ' in array: ' + itemsInArray);
+    console.log(items);
 
     if (items.length > itemsInArray ) {                 // if an item has been added to the array temporarily
         if (mostRecentItemPosition > -1) {
@@ -96,7 +99,7 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     var item = $input.val();                            // take the value of the input box 
     var itemTrimmed = item.trim();                      // trim leading and following white space
 
-    mostRecentItem = itemTrimmed                        //set most recent item globally
+    mostRecentItem = itemTrimmed;                       //set most recent item globally
 
     if (multiEntry === true) {                              // if multi-entry is active
         if (event.which === 13 && !event.shiftKey) {        //if enter is pressed
@@ -116,7 +119,7 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     if (event.which === 13 && !event.shiftKey) {        //if enter is pressed
         $input.val('');
         itemsInArray++;
-        console.log('enter')
+        console.log('enter');
         $('.list' + ' .' + mostRecentItemPosition).removeClass('active');  // remove active class 
 
     };
@@ -143,7 +146,7 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
 var deleteFunction = function(){
 //delete items from array
     if (deleteOnClick === true) {
-        $('ul.list').on('click', 'li', function () {    //on clicking a list item
+        $('.deletable').on('click', 'li', function () {    //on clicking a list item
             var arrayPosition = $(this).attr('class');  //grab the array position from the class
             items[arrayPosition] = " ";                 //replace it with a blank space
             $(this).addClass('inert');                  //make it look inert
@@ -152,10 +155,6 @@ var deleteFunction = function(){
             //remove from array
         });
     }
-    else{
-        $('.list').removeClass('deletable');
-        //stop the delete function
-    };
 };
 
 //option Checkbox actions
