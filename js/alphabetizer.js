@@ -3,7 +3,8 @@ var alphabetizeOn = true;
 var instantEntry = true;
 var deleteOnClick = false;
 var multiEntry = false;
-var openOptions = true;
+var showOptions = true;
+var showIndex = false;
 
 
 var shuffleData = false;
@@ -196,3 +197,88 @@ $(".clear-button").click(function(){        // if clear button is clicked
 //some alphabetization code repurposed from
 //http://stackoverflow.com/a/25431980
 //http://stackoverflow.com/a/9645447
+
+///responsiveness code
+//small height = 500px
+var windowHeight = $(window).height();
+var windowWidth = $(window).width();
+var headerHeight = $('.row.first').height();
+var footerHeight = $('footer').height();
+var itemsHeight = windowHeight - (headerHeight + footerHeight);
+var shortDisplay = false
+
+
+var responsiveWindow = function(){
+    if (windowHeight < 500) {
+        shortDisplay = true;
+        $("body").addClass("short-display");
+    }
+    else{
+        shortDisplay = false;
+        $("body").removeClass("short-display");
+    };
+
+    if (windowHeight < 500 && windowHeight > 400) {
+        $('.items').css('max-height', itemsHeight - 40 + 'px');        
+    };
+
+    if (windowHeight < 400) {
+        $('.items').css('max-height', '185px');        
+    };
+
+    if (windowHeight > 500) {
+        $('.items').css('max-height', itemsHeight - 100 + 'px');           
+    };
+
+
+};
+
+$( window ).resize(function() {
+    windowHeight = $(window).height();
+    windowWidth = $(window).width();
+    headerHeight = $('.row.first').height();
+    footerHeight = $('footer').height();
+    itemsHeight = windowHeight - (headerHeight + footerHeight);
+    responsiveWindow();
+
+});
+
+
+responsiveWindow();
+
+
+//options dropdown
+    $('.options-head').click(function () {
+      if ($(".options-head .arrow").hasClass('unpressed')) {
+        $(".options-head .arrow").removeClass("unpressed");
+        $(".options-head .arrow").addClass("pressed");
+        $(".options-head").removeClass("inert");
+        $( ".options").stop(true, true).slideDown();
+        showOptions = true;
+      }
+      else {
+        $(".options-head .arrow").removeClass("pressed");
+        $(".options-head .arrow").addClass("unpressed");
+        $(".options-head").addClass("inert");
+        $( ".options" ).stop(true, true).slideUp();
+        showOptions = false;
+      };
+    });
+
+//index dropdown
+    $('.index-head').click(function () {
+      if ($(".index-head .arrow").hasClass('unpressed')) {
+        $(".index-head .arrow").removeClass("unpressed");
+        $(".index-head .arrow").addClass("pressed");
+        $(".index-head").removeClass("inert");
+        $( ".alphabet").stop(true, true).slideDown();
+        showIndex = true;
+      }
+      else {
+        $(".index-head .arrow").removeClass("pressed");
+        $(".index-head").addClass("inert");
+        $(".index-head .arrow").addClass("unpressed");
+        $( ".alphabet" ).stop(true, true).slideUp();
+        showIndex = false;
+      };
+    });

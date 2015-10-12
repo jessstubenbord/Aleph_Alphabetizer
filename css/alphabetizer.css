@@ -17,7 +17,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .row.first{
-	margin-top: 60px;
+	padding-top: 60px;
 }
 
 
@@ -93,11 +93,64 @@ p.hint {
     color: #717070;
 }
 
+h3 {
+	font-size: 16px;
+}
+
+.options-head, .index-head {
+	cursor: pointer;
+}
+
+.options-head, .index-head {
+	color: #ccc;
+}
+
+.black {
+	color: #000;
+}
+
+.inert .black {
+	color: #ccc;
+}
+
+h3.options-head:hover, h3.index-head:hover  {
+	color: #000;
+}
+
+ul .arrow.pressed {
+/**    background: #ACACAC;
+    color: #f7f7f7;
+    border: 1px solid #ACACAC;**/
+}
+
+.arrow.unpressed .down {
+  display: inline;
+}
+
+.arrow.unpressed .up {
+  display: none;
+}
+
+.arrow.pressed .down {
+  display: none;
+}
+
+.arrow.pressed .up {
+  display: inline;
+}
+
+
 ul.alphabet {
 	list-style: none;
 	font-size: 22px;
-	max-height: 360px;
+	max-height: 261px;
 	overflow: auto;
+	margin: 0;
+	display: none;
+}
+
+.alphabet {
+	display: none!important;
 }
 
 .alphabet li{
@@ -139,19 +192,42 @@ ul.list.deletable li:active{
 
 .items {
     height: 100%;
-    max-height: 450px;
+    /*max-height: 450px;*/
     overflow: auto;
 }
 
 /*on small screens*/
 @media only screen and (max-width: 64.063em) {
 
-.index{
+.index, .options, .options-head {
 	display: none;
 }
 
 }
 
+.short-display .row.first {
+    padding-top: 0;
+}
+
+.short-display .css-input {
+    border-width: 1px;
+    border-color: #CCC;
+    padding: 5px;
+    font-size: 24px;
+    height: 43px;
+}
+
+.short-display textarea {
+	min-height: 30px;
+}
+
+.short-display h1 {
+    font-size: 2.0rem;
+}
+
+.short-display .hint {
+	display: none;
+}
 
 /*on large screens*/
 @media only screen and (min-width: 64.063em) {
