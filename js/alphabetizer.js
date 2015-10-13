@@ -211,11 +211,9 @@ var shortDisplay = false
 var responsiveWindow = function(){
     if (windowHeight < 500) {
         shortDisplay = true;
-        $("body").addClass("short-display");
     }
     else{
         shortDisplay = false;
-        $("body").removeClass("short-display");
     };
 
     if (windowHeight < 500 && windowHeight > 400) {

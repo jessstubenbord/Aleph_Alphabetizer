@@ -149,10 +149,6 @@ ul.alphabet {
 	display: none;
 }
 
-.alphabet {
-	display: none!important;
-}
-
 .alphabet li{
 	/*  border-right: 2px solid #ccc;*/
 	padding-left: 4px;
@@ -199,35 +195,42 @@ ul.list.deletable li:active{
 /*on small screens*/
 @media only screen and (max-width: 64.063em) {
 
-.index, .options, .options-head {
-	display: none;
-}
+	.index, .options, .options-head {
+		display: none;
+	}
 
 }
 
-.short-display .row.first {
-    padding-top: 0;
+
+/*on short screens*/
+@media only screen and (max-height: 500px) {
+
+	.row.first {
+	    padding-top: 0;
+	}
+
+	.css-input {
+	    border-width: 1px;
+	    border-color: #CCC;
+	    padding: 5px;
+	    font-size: 24px;
+	    height: 43px;
+	}
+
+	textarea {
+		min-height: 30px;
+	}
+
+	h1 {
+	    font-size: 2.0rem;
+	}
+
+	.hint {
+		display: none;
+	}
+
 }
 
-.short-display .css-input {
-    border-width: 1px;
-    border-color: #CCC;
-    padding: 5px;
-    font-size: 24px;
-    height: 43px;
-}
-
-.short-display textarea {
-	min-height: 30px;
-}
-
-.short-display h1 {
-    font-size: 2.0rem;
-}
-
-.short-display .hint {
-	display: none;
-}
 
 /*on large screens*/
 @media only screen and (min-width: 64.063em) {
