@@ -79,7 +79,16 @@ var displayItems = function() {
     });
 
     ///add if statement
-    $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible 
+    $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible
+//    $('.items').stop(true, true).animate({
+//        scrollTop: $('li.' + mostRecentItemPosition).offset().top
+//    }, 1000); 
+    var scrollToPosition = mostRecentItemPosition - 2; 
+    $('.items').scrollTop(0);
+    $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item
+    console.log('mrip: ' + mostRecentItemPosition)
+
+
 };
 
 var itemsInArray = 0;
