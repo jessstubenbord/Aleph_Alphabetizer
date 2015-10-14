@@ -3,8 +3,10 @@ var alphabetizeOn = true;
 var instantEntry = true;
 var deleteOnClick = false;
 var multiEntry = false;
+var activeEntry = false;
 var showOptions = true;
 var showIndex = false;
+
 
 
 var shuffleData = false;
@@ -78,12 +80,20 @@ var displayItems = function() {
         $list.append('<li class="' + indexPosition + '">' + this + '</li>'); // append a list item for each
     });
 
+    if (activeEntry === true) {
+        $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible
+    };
+
     ///add if statement
-    $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible
 //    $('.items').stop(true, true).animate({
 //        scrollTop: $('li.' + mostRecentItemPosition).offset().top
 //    }, 1000); 
-    var scrollToPosition = mostRecentItemPosition - 2; 
+
+    var scrollToPosition = mostRecentItemPosition; 
+    
+    if (scrollToPosition >= 2) {
+        scrollToPosition = mostRecentItemPosition - 2; 
+    };
     $('.items').scrollTop(0);
     $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item
     console.log('mrip: ' + mostRecentItemPosition)
@@ -110,6 +120,8 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     var itemTrimmed = item.trim();                      // trim leading and following white space
 
     mostRecentItem = itemTrimmed;                       //set most recent item globally
+    activeEntry = true;                                 // set active to on
+
 
     if (multiEntry === true) {                              // if multi-entry is active
         if (event.which === 13 && !event.shiftKey) {        //if enter is pressed
@@ -131,6 +143,7 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
         itemsInArray++;
         console.log('enter');
         $('.list' + ' .' + mostRecentItemPosition).removeClass('active');  // remove active class 
+        activeEntry = false; // set active to off
 
     };
 
@@ -138,11 +151,12 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
     	$('.css-input').addClass('multi-entry');			// Activate multi-entry mode
     	multiEntry = true;                                  // switch it on
-        instantEntry = false;                               //turn off instant
+        instantEntry = false;                               // turn off instant
     }
     if (event.which === 27) {                               // if escape is pressed
         $('.css-input').removeClass('multi-entry');         // de-activate multi-entry mode
         multiEntry = false;                                 // switch it off
+        instantEntry = true                                 // swich back to instant mode
         var $input = $(event.target);                       // take the reference to the inputbox
         $input.val('');                                     // clear the input box
     }
@@ -160,9 +174,7 @@ var deleteFunction = function(){
             var arrayPosition = $(this).attr('class');  //grab the array position from the class
             items[arrayPosition] = " ";                 //replace it with a blank space
             $(this).addClass('inert');                  //make it look inert
-            //$(this).empty(); //make it dissapear
             //$(this).html('<a href="#undid">undo</a>');//add undo link
-            //remove from array
         });
     }
 };
@@ -199,6 +211,7 @@ $(".shuffle-box").change(function() {       // if shuffle is toggled
 });
 $(".clear-button").click(function(){        // if clear button is clicked
     items.length = 0;                       // clear all data in items array
+    itemsInArray = 0;                       // reset itemsInArray variable
     displayItems();                         // display items
 });
 
