@@ -11,6 +11,7 @@ var showIndex = false;
 
 var shuffleData = false;
 var alwaysShuffleData = false;
+var spaceSplit = false;
 var clearData = false;
 
 var mostRecentItem;
@@ -84,19 +85,22 @@ var displayItems = function() {
         $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible
     };
 
-    ///add if statement
+//animated scroll version -- more pleasant
 //    $('.items').stop(true, true).animate({
-//        scrollTop: $('li.' + mostRecentItemPosition).offset().top
+//        scrollTop: $('li.' + scrollToPosition).position().top
 //    }, 1000); 
 
-    var scrollToPosition = mostRecentItemPosition; 
-    
+    var scrollToPosition = mostRecentItemPosition; // set the target to scroll to
     if (scrollToPosition >= 2) {
-        scrollToPosition = mostRecentItemPosition - 2; 
+        scrollToPosition = mostRecentItemPosition - 2; // subtract 2 positions if possible
+    }
+    else{
+        scrollToPosition = 0
     };
-    $('.items').scrollTop(0);
-    $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item
-    console.log('mrip: ' + mostRecentItemPosition)
+//    $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
+    $('.items').stop(true, true).animate({
+        scrollTop: $('li.' + scrollToPosition).position().top   // Animated scroll to recent item http://stackoverflow.com/a/33114021/1973361
+    }, 500); 
 
 
 };
@@ -106,8 +110,8 @@ var itemsInArray = 0;
 //grab items from input
 $('.css-input').on('keyup', function (event) {              // listen to each keypress in the input box
 //    if (event.which === 13 && !event.shiftKey) {            // if just enter is pressed
-    console.log('length: ' + items.length + ' in array: ' + itemsInArray);
-    console.log(items);
+    //console.log('length: ' + items.length + ' in array: ' + itemsInArray);
+    //console.log(items);
 
     if (items.length > itemsInArray ) {                 // if an item has been added to the array temporarily
         if (mostRecentItemPosition > -1) {
@@ -123,26 +127,12 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     activeEntry = true;                                 // set active to on
 
 
-    if (multiEntry === true) {                              // if multi-entry is active
-        if (event.which === 13 && !event.shiftKey) {        //if enter is pressed
-            var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
-            $.merge(items, itemsSplit);                         // add split items to array
-            console.log('pushed: ' + itemsSplit);
 
-            $input.val('');
-            itemsInArray++;
-            console.log('enter')
-        };
-    }
-    else{                                               //otherwise
-        items.push(itemTrimmed);                        //just add trimed items
-    }
-
-    if (event.which === 13 && !event.shiftKey) {        //if enter is pressed
-        $input.val('');
-        itemsInArray++;
-        console.log('enter');
-        $('.list' + ' .' + mostRecentItemPosition).removeClass('active');  // remove active class 
+    if ( (event.which === 13 || event.which === 10) && !event.shiftKey) {   // if enter is pressed
+        $input.val(' ');                                                    // empty the input (space prevents placeholder text from displaying)
+        itemsInArray++;                                                     // add one to the item counter
+        //console.log('enter');
+        $('.list' + ' .' + mostRecentItemPosition).removeClass('active');   // remove active class 
         activeEntry = false; // set active to off
 
     };
@@ -150,21 +140,57 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
 //    }
     if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
     	$('.css-input').addClass('multi-entry');			// Activate multi-entry mode
+        $('.hint-box').removeClass('default');              // de-ctivate default hint
+        $('.hint-box').addClass('multi');                   // Activate multi-entry hint
+
     	multiEntry = true;                                  // switch it on
         instantEntry = false;                               // turn off instant
     }
     if (event.which === 27) {                               // if escape is pressed
         $('.css-input').removeClass('multi-entry');         // de-activate multi-entry mode
+        $('.hint-box').removeClass('multi');                // de-activate multi-entry hint
+        $('.hint-box').addClass('default');                 // activate default hint
         multiEntry = false;                                 // switch it off
         instantEntry = true                                 // swich back to instant mode
         var $input = $(event.target);                       // take the reference to the inputbox
         $input.val('');                                     // clear the input box
     }
+    if (multiEntry === true) {                                  // if multi-entry is active
+        if (event.which === 13 && !event.shiftKey) {            // if enter is pressed
+            var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
+            $.merge(items, itemsSplit);                         // add split items to array
+            //console.log('pushed: ' + itemsSplit);
+
+            $input.val(' ');
+            itemsInArray++;
+            ///console.log('enter')
+        };
+
+        if (spaceSplit === true) {                              // unsupported, doesn't really work
+            var itemsSplit = itemTrimmed.split(/\s+/g);         // split at each whitespace
+            $.merge(items, itemsSplit);                         // add split items to array
+            $input.val('');
+            itemsInArray++;            
+        };
+    }
+    else{                                                                   // otherwise
+            var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
+            $.merge(items, itemsSplit);                         // add split items to array
+//        items.push(itemTrimmed);                                            // just add trimed items
+    }
+
+
     
     displayItems();                                         // display all of the items
-    console.log(items);
-    console.log('-----'); 
+    //console.log(items);
+    //console.log('-----'); 
 
+});
+
+$('.css-input').on('keydown', function (event) {            // listen to each keydown in the input box
+    if (event.which === 13 && !event.shiftKey) {            // if it's enter & not shift enter
+        event.preventDefault();                             // stop enter from being entered
+    };
 });
 
 var deleteFunction = function(){

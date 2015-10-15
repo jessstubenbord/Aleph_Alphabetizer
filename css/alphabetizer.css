@@ -58,14 +58,13 @@ button:hover, button:focus {
 }
 
 .css-input { 
-	border-width:2px; 
-	border-color:#cccccc; 
+	border: solid 2px #CCCCCC;
+	/*border-right: none;*/
 	padding:5px; 
 	font-size:31px;
 	height: 51px; 
 	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
-	text-align:center; 
-	border-style:solid;
+	text-align:center;
 	max-width: 90%;  
 } 
 
@@ -86,11 +85,34 @@ button:hover, button:focus {
 	border: 2px solid #ccc; 
 } 
 
+button.submit {
+    height: 51px;
+    margin: 0;
+	vertical-align: top;
+	background-color: #F7F7F7;
+	border: 2px solid #CCCCCC;
+	border-left: none;
+	color: #CCC;
+}
+
+button.submit:hover{
+	background-color: #DDD;
+	color: #000;
+}
+
 p.hint {
     margin-bottom: 0;
     font-size: 0.9rem;
     line-height: 1.5;
     color: #717070;
+}
+
+.hint-box.default .hint.multi{
+	display: none;
+}
+
+.hint-box.multi .hint.default{
+	display: none;
 }
 
 h3 {
@@ -165,6 +187,7 @@ ul.alphabet {
 ul.list {
 	list-style: none;
 	font-size: 22px;
+	position: relative;
 }
 
 ul.list.deletable li:hover{
@@ -216,6 +239,19 @@ ul.list.deletable li:active{
 	    font-size: 24px;
 	    height: 43px;
 	}
+
+	.css-input:focus { 
+		outline:none;
+		border-top: 1px solid #fff;
+		border-right: 1px solid #fff;
+		/*border-right: none;*/
+		border-left: 1px solid #fff; 
+	}
+
+	button.submit {
+	    height: 43px;
+	}
+
 
 	textarea {
 		min-height: 30px;

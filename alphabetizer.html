@@ -18,8 +18,11 @@
 <div class="row first">
   <div class="large-8 large-offset-2 columns text-center">
     <h1>Alphabetizer</h1>
-    <textarea class="css-input" placeholder="Enter text here...."></textarea>
-    <p class="hint"> Try hitting shift + enter or pasting in multiple items</p>
+    <textarea class="css-input" placeholder="Enter text here...."></textarea><!--<button class="submit"><strong>!</strong></button>-->
+    <div class="hint-box default">
+    <p class="hint default"> Try hitting shift + enter or pasting in multiple items</p>
+    <p class="hint multi">Hit esc to leave multi-entry mode</p>
+    </div>
   </div>
 </div>
 
@@ -31,7 +34,7 @@
   <div class="large-2 large-offset-1 columns">
     <h3 class="options-head"><span class="arrow pressed"><span class="down">+</span><span class="up">-</span></span><span class="black"> Options </span></h3>
     <div class="options">
-      <label><input type="checkbox" class="deletable-box" name="box1" value="first_checkbox"> click to delete</label><br>
+      <label><input type="checkbox" class="deletable-box" name="box1" value="first_checkbox"> deletable items</label><br>
       <label><input type="checkbox" class="alphabet-box" name="box1" value="second_checkbox" checked="checked"> alphabetize</label><br>
       <label><input type="checkbox" class="shuffle-box" name="box1" value="third_checkbox"> shuffle</label><br>
       <button class="clear-button">clear all entries</button>
