@@ -1,18 +1,25 @@
 
+//core features
 var alphabetizeOn = true;
 var instantEntry = true;
-var deleteOnClick = false;
-var multiEntry = false;
+
+//secodary features
 var activeEntry = false;
+var multiEntry = false;
+
+var deleteOnClick = false;
+var shuffleData = false;
+var clearData = false;
+
+//User Interface
 var showOptions = true;
 var showIndex = false;
 
 
-
-var shuffleData = false;
-var alwaysShuffleData = false;
+//unsupported features
 var spaceSplit = false;
-var clearData = false;
+var savedItems = false;
+
 
 var mostRecentItem;
 var mostRecentItemPosition;
@@ -41,18 +48,22 @@ function shuffleArray(array) {
 //};
 
 
-
 //display items according to preset options
+//This function is the "display engine"
 var displayItems = function() {
 
-    var $list = $('.list');       
+    var $list = $('.list');                                         //the list will will be placed & displayed in .list
 
+
+    //This is where the options/features list starts
 	if (alphabetizeOn === true) {                                   //if alphabetize is on
 		items.sort(function (a, b) {
-            return a.toLowerCase().localeCompare(b.toLowerCase());
-        });                                                         //sort items independent of case
-        $('.alphabet-box').prop( 'checked', true );                 //make sure the option is checked
+            return a.toLowerCase().localeCompare(b.toLowerCase());  //sort items independent of case
+        });                                                         
+
+        $('.alphabet-box').prop( 'checked', true );                 //make sure the option box is checked
 	};
+
 	if (shuffleData === true ) {                                    //if shuffle is on
         alphabetizeOn = false;                                      //turn off auto-alphabetize
 		shuffleArray(items);				                        //shuffle data
@@ -62,64 +73,74 @@ var displayItems = function() {
     if (shuffleData === false) {                                    //if shuffle is off
         $('.shuffle-box').prop( 'checked', false );                 //uncheck shuffle box
     };
+
 	//if (multiEntry === true) {
 		//only fires if it's true from the start, not if it's fired by key recognition
 	//}
+
 	if (deleteOnClick === true) {                                   //if deletable is on
 		$list.addClass("deletable");                                //make things appear deletable
 		deleteFunction();                                           //run the delete function
 	};
-    if (deleteOnClick === false) {                                   //if deletable is on
-        $list.removeClass("deletable").unbind('click');                                //make things appear deletable
+    if (deleteOnClick === false) {                                  //if deletable is on
+        $list.removeClass("deletable").unbind('click');             //make things appear deletable, unbind jquery's onclick fron .deleteable
         deleteFunction();                                           //run the delete function
     };
 
-    mostRecentItemPosition = items.indexOf(mostRecentItem);
+//start making the list
 
     $list.html('');                                                 // clear the last content of .list
+
     $.each(items, function (indexPosition) {                        // iterate through the list
         $list.append('<li class="' + indexPosition + '">' + this + '</li>'); // append a list item for each
     });
 
-    if (activeEntry === true) {
+//highlite active entry** -note to self, learn how to actually spell highlite 
+
+    mostRecentItemPosition = items.indexOf(mostRecentItem);             // sets most recent item position so that it can be highlited in list *not scoped correctly
+    if (activeEntry === true) {                                         // if active entry is on
         $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible
     };
 
-//animated scroll version -- more pleasant
-//    $('.items').stop(true, true).animate({
-//        scrollTop: $('li.' + scrollToPosition).position().top
-//    }, 1000); 
 
-    var scrollToPosition = mostRecentItemPosition; // set the target to scroll to
+//start scrolling the list to current item
+
+    var scrollToPosition = mostRecentItemPosition;                  // set the target to scroll to
+
     if (scrollToPosition >= 2) {
-        scrollToPosition = mostRecentItemPosition - 2; // subtract 2 positions if possible
+        scrollToPosition = mostRecentItemPosition - 2;              // subtract 2 positions if possible to give context
     }
     else{
-        scrollToPosition = 0
+        scrollToPosition = 0                                        // otherwise make it the top
     };
-//    $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
+
     $('.items').stop(true, true).animate({
         scrollTop: $('li.' + scrollToPosition).position().top   // Animated scroll to recent item http://stackoverflow.com/a/33114021/1973361
     }, 500); 
 
+//    $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
+
 
 };
 
+
 var itemsInArray = 0;
 
+
 //grab items from input
+//This segment listens to and manipulates the input box... and does some stuff with what it grabs
 $('.css-input').on('keyup', function (event) {              // listen to each keypress in the input box
-//    if (event.which === 13 && !event.shiftKey) {            // if just enter is pressed
     //console.log('length: ' + items.length + ' in array: ' + itemsInArray);
     //console.log(items);
 
     if (items.length > itemsInArray ) {                 // if an item has been added to the array temporarily
         if (mostRecentItemPosition > -1) {
-            items.splice(mostRecentItemPosition, 1);    // delete it
+            items.splice(mostRecentItemPosition, 1);    // delete it now
         };
     };
 
-    var $input = $(event.target);                       // take the reference to the inputbox
+
+    var $input = $(event.target);                       // set $input as the source of all of this
     var item = $input.val();                            // take the value of the input box 
     var itemTrimmed = item.trim();                      // trim leading and following white space
 
@@ -127,25 +148,25 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     activeEntry = true;                                 // set active to on
 
 
+// special cases for certain keys/combos
 
     if ( (event.which === 13 || event.which === 10) && !event.shiftKey) {   // if enter is pressed
         $input.val(' ');                                                    // empty the input (space prevents placeholder text from displaying)
         itemsInArray++;                                                     // add one to the item counter
         //console.log('enter');
-        $('.list' + ' .' + mostRecentItemPosition).removeClass('active');   // remove active class 
-        activeEntry = false; // set active to off
-
+        $('.list' + ' .' + mostRecentItemPosition).removeClass('active');   // remove active class from now inactive item
+        activeEntry = false;                                                // set active to off
     };
 
-//    }
     if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
     	$('.css-input').addClass('multi-entry');			// Activate multi-entry mode
         $('.hint-box').removeClass('default');              // de-ctivate default hint
         $('.hint-box').addClass('multi');                   // Activate multi-entry hint
 
-    	multiEntry = true;                                  // switch it on
-        instantEntry = false;                               // turn off instant
+    	multiEntry = true;                                  // switch multi entry on
+        instantEntry = false;                               // turn off instant entry
     }
+
     if (event.which === 27) {                               // if escape is pressed
         $('.css-input').removeClass('multi-entry');         // de-activate multi-entry mode
         $('.hint-box').removeClass('multi');                // de-activate multi-entry hint
@@ -155,28 +176,30 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
         var $input = $(event.target);                       // take the reference to the inputbox
         $input.val('');                                     // clear the input box
     }
+
+//adding items to the array
+    //with multi-entry
     if (multiEntry === true) {                                  // if multi-entry is active
         if (event.which === 13 && !event.shiftKey) {            // if enter is pressed
             var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
             $.merge(items, itemsSplit);                         // add split items to array
             //console.log('pushed: ' + itemsSplit);
-
-            $input.val(' ');
-            itemsInArray++;
+            $input.val(' ');                                    // empty the input (space prevents placeholder text from displaying)
+            itemsInArray++;                                     // increase the "official" item count
             ///console.log('enter')
         };
 
         if (spaceSplit === true) {                              // unsupported, doesn't really work
             var itemsSplit = itemTrimmed.split(/\s+/g);         // split at each whitespace
             $.merge(items, itemsSplit);                         // add split items to array
-            $input.val('');
+            $input.val(' ');                                    // empty the input (space prevents placeholder text from displaying)
             itemsInArray++;            
         };
     }
-    else{                                                                   // otherwise
+    else{                                                       //  for evrything else
             var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
             $.merge(items, itemsSplit);                         // add split items to array
-//        items.push(itemTrimmed);                                            // just add trimed items
+//        items.push(itemTrimmed);// just add trimed items
     }
 
 
@@ -238,6 +261,7 @@ $(".shuffle-box").change(function() {       // if shuffle is toggled
 $(".clear-button").click(function(){        // if clear button is clicked
     items.length = 0;                       // clear all data in items array
     itemsInArray = 0;                       // reset itemsInArray variable
+    $input.val('');                         // empty the input
     displayItems();                         // display items
 });
 
@@ -248,70 +272,75 @@ $(".clear-button").click(function(){        // if clear button is clicked
 
 ///responsiveness code
 //small height = 500px
-var windowHeight = $(window).height();
-var windowWidth = $(window).width();
-var headerHeight = $('.row.first').height();
-var footerHeight = $('footer').height();
-var itemsHeight = windowHeight - (headerHeight + footerHeight);
-var shortDisplay = false
+var windowHeight = $(window).height();                              // grab window height
+var windowWidth = $(window).width();                                // grab window width
+var headerHeight = $('.row.first').height();                        // grab height of the header
+var footerHeight = $('footer').height();                            // grab height of the footer
+var itemsHeight = windowHeight - (headerHeight + footerHeight);     // calculate available height for the items
+var shortDisplayHeight = 500;                                       // set the threshold for short display - note to self learn how to spell threshold
+var superShortDisplayHeight = 400;                                  // set thrshold for super-small display
+var shortDisplay = false                                            // short display mode?
 
 
+// function which controls javascript based responsiveness
 var responsiveWindow = function(){
-    if (windowHeight < 500) {
-        shortDisplay = true;
+
+    if (windowHeight < shortDisplayHeight) {    // if the window is lower than the threshold for short display
+        shortDisplay = true;                    // set it into short mode
     }
-    else{
-        shortDisplay = false;
+    else{                                       // otherwise
+        shortDisplay = false;                   // keep it in tall mode
     };
 
-    if (windowHeight < 500 && windowHeight > 400) {
-        $('.items').css('max-height', itemsHeight - 40 + 'px');        
+    if (windowHeight < shortDisplayHeight && windowHeight > superShortDisplayHeight) {      // if the window is between short and super short
+        $('.items').css('max-height', itemsHeight - 40 + 'px');                             // set the height of items accordingly **figure out where that 40px comes from maybe?
     };
 
-    if (windowHeight < 400) {
-        $('.items').css('max-height', '185px');        
+    if (windowHeight < superShortDisplayHeight) {      // if the display is super short 
+        $('.items').css('max-height', '185px');        // set the height of items list to minimum of 185
     };
 
-    if (windowHeight > 500) {
-        $('.items').css('max-height', itemsHeight - 100 + 'px');           
+    if (windowHeight > shortDisplayHeight) {                        // if the display is normal sized
+        $('.items').css('max-height', itemsHeight - 100 + 'px');    // set the height of items accordingly ** figure out where the extra 100 are from...
     };
 
 
 };
 
-$( window ).resize(function() {
-    windowHeight = $(window).height();
-    windowWidth = $(window).width();
-    headerHeight = $('.row.first').height();
-    footerHeight = $('footer').height();
-    itemsHeight = windowHeight - (headerHeight + footerHeight);
-    responsiveWindow();
+$( window ).resize(function() {                                     // on window resize
+    windowHeight = $(window).height();                              // reset window height 
+    windowWidth = $(window).width();                                // reset window width
+    headerHeight = $('.row.first').height();                        // reset header height 
+    footerHeight = $('footer').height();                            // reset footer height
+    itemsHeight = windowHeight - (headerHeight + footerHeight);     // reset height available for items
+    responsiveWindow();                                             // re-run the responsive function
 
 });
 
 
-responsiveWindow();
+responsiveWindow();         // run the responsive function
 
 
-//options dropdown
-    $('.options-head').click(function () {
-      if ($(".options-head .arrow").hasClass('unpressed')) {
-        $(".options-head .arrow").removeClass("unpressed");
-        $(".options-head .arrow").addClass("pressed");
-        $(".options-head").removeClass("inert");
-        $( ".options").stop(true, true).slideDown();
-        showOptions = true;
+// options dropdown
+    $('.options-head').click(function () {                          // when the options header is clicked
+      if ($(".options-head .arrow").hasClass('unpressed')) {        // if the arrow was unpressed
+        $(".options-head .arrow").removeClass("unpressed");         // remove the unpressed class
+        $(".options-head .arrow").addClass("pressed");              // add the pressed class
+        $(".options-head").removeClass("inert");                    // remove the inert(unused) class
+        $( ".options").stop(true, true).slideDown();                // slide down the options
+        showOptions = true;                                         // toggle them as shown
       }
-      else {
-        $(".options-head .arrow").removeClass("pressed");
-        $(".options-head .arrow").addClass("unpressed");
-        $(".options-head").addClass("inert");
-        $( ".options" ).stop(true, true).slideUp();
-        showOptions = false;
+      else {                                                        // otherwise (if the arrow was pressed)
+        $(".options-head .arrow").removeClass("pressed");           // remove pressed class
+        $(".options-head .arrow").addClass("unpressed");            // add unpressed class
+        $(".options-head").addClass("inert");                       // add inert class
+        $( ".options" ).stop(true, true).slideUp();                 // slide the options away
+        showOptions = false;                                        // toggle them as hidden
       };
     });
 
-//index dropdown
+// index dropdown (similar to options)
+// not currently in use
     $('.index-head').click(function () {
       if ($(".index-head .arrow").hasClass('unpressed')) {
         $(".index-head .arrow").removeClass("unpressed");
