@@ -21,9 +21,12 @@ var spaceSplit = false;
 var savedItems = false;
 
 
+// Used variables
+var itemsInArray = 0;
 var mostRecentItem;
 var mostRecentItemPosition;
 
+// Magical array where everything takes place
 var items = new Array();
 
 
@@ -55,7 +58,7 @@ var displayItems = function() {
     var $list = $('.list');                                         //the list will will be placed & displayed in .list
 
 
-    //This is where the options/features list starts
+    // This is where the options/features list starts
 	if (alphabetizeOn === true) {                                   //if alphabetize is on
 		items.sort(function (a, b) {
             return a.toLowerCase().localeCompare(b.toLowerCase());  //sort items independent of case
@@ -87,7 +90,7 @@ var displayItems = function() {
         deleteFunction();                                           //run the delete function
     };
 
-//start making the list
+// start making the list
 
     $list.html('');                                                 // clear the last content of .list
 
@@ -95,7 +98,7 @@ var displayItems = function() {
         $list.append('<li class="' + indexPosition + '">' + this + '</li>'); // append a list item for each
     });
 
-//highlite active entry** -note to self, learn how to actually spell highlite 
+// highlite active entry** -note to self, learn how to actually spell highlite 
 
     mostRecentItemPosition = items.indexOf(mostRecentItem);             // sets most recent item position so that it can be highlited in list *not scoped correctly
     if (activeEntry === true) {                                         // if active entry is on
@@ -122,10 +125,6 @@ var displayItems = function() {
 
 
 };
-
-
-var itemsInArray = 0;
-
 
 //grab items from input
 //This segment listens to and manipulates the input box... and does some stuff with what it grabs
@@ -219,11 +218,11 @@ $('.css-input').on('keydown', function (event) {            // listen to each ke
 var deleteFunction = function(){
 //delete items from array
     if (deleteOnClick === true) {
-        $('.deletable').on('click', 'li', function () {    //on clicking a list item
-            var arrayPosition = $(this).attr('class');  //grab the array position from the class
-            items[arrayPosition] = " ";                 //replace it with a blank space
-            $(this).addClass('inert');                  //make it look inert
-            //$(this).html('<a href="#undid">undo</a>');//add undo link
+        $('.deletable').on('click', 'li', function () {     // on clicking a list item
+            var arrayPosition = $(this).attr('class');      // grab the array position from the class
+            items[arrayPosition] = " ";                     // replace it with a blank space
+            $(this).addClass('inert');                      // make it look inert
+            //$(this).html('<a href="#undid">undo</a>');    // add undo link
         });
     }
 };
@@ -270,6 +269,7 @@ $(".clear-button").click(function(){        // if clear button is clicked
 //http://stackoverflow.com/a/25431980
 //http://stackoverflow.com/a/9645447
 
+
 ///responsiveness code
 //small height = 500px
 var windowHeight = $(window).height();                              // grab window height
@@ -279,7 +279,8 @@ var footerHeight = $('footer').height();                            // grab heig
 var itemsHeight = windowHeight - (headerHeight + footerHeight);     // calculate available height for the items
 var shortDisplayHeight = 500;                                       // set the threshold for short display - note to self learn how to spell threshold
 var superShortDisplayHeight = 400;                                  // set thrshold for super-small display
-var shortDisplay = false                                            // short display mode?
+var shortDisplay = false;                                            // short display mode?
+var thinDisplayWidth = "64.063em";
 
 
 // function which controls javascript based responsiveness
@@ -357,3 +358,8 @@ responsiveWindow();         // run the responsive function
         showIndex = false;
       };
     });
+
+
+
+
+
