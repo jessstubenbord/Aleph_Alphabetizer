@@ -270,60 +270,9 @@ $(".clear-button").click(function(){        // if clear button is clicked
 //http://stackoverflow.com/a/9645447
 
 
-///responsiveness code
-//small height = 500px
-var windowHeight = $(window).height();                              // grab window height
-var windowWidth = $(window).width();                                // grab window width
-var headerHeight = $('.row.first').height();                        // grab height of the header
-var footerHeight = $('footer').height();                            // grab height of the footer
-var itemsHeight = windowHeight - (headerHeight + footerHeight);     // calculate available height for the items
-var shortDisplayHeight = 500;                                       // set the threshold for short display - note to self learn how to spell threshold
-var superShortDisplayHeight = 400;                                  // set thrshold for super-small display
-var shortDisplay = false;                                            // short display mode?
-var thinDisplayWidth = "64.063em";
-
-
-// function which controls javascript based responsiveness
-var responsiveWindow = function(){
-
-    if (windowHeight < shortDisplayHeight) {    // if the window is lower than the threshold for short display
-        shortDisplay = true;                    // set it into short mode
-    }
-    else{                                       // otherwise
-        shortDisplay = false;                   // keep it in tall mode
-    };
-
-    if (windowHeight < shortDisplayHeight && windowHeight > superShortDisplayHeight) {      // if the window is between short and super short
-        $('.items').css('max-height', itemsHeight - 40 + 'px');                             // set the height of items accordingly **figure out where that 40px comes from maybe?
-    };
-
-    if (windowHeight < superShortDisplayHeight) {      // if the display is super short 
-        $('.items').css('max-height', '185px');        // set the height of items list to minimum of 185
-    };
-
-    if (windowHeight > shortDisplayHeight) {                        // if the display is normal sized
-        $('.items').css('max-height', itemsHeight - 100 + 'px');    // set the height of items accordingly ** figure out where the extra 100 are from...
-    };
-
-
-};
-
-$( window ).resize(function() {                                     // on window resize
-    windowHeight = $(window).height();                              // reset window height 
-    windowWidth = $(window).width();                                // reset window width
-    headerHeight = $('.row.first').height();                        // reset header height 
-    footerHeight = $('footer').height();                            // reset footer height
-    itemsHeight = windowHeight - (headerHeight + footerHeight);     // reset height available for items
-    responsiveWindow();                                             // re-run the responsive function
-
-});
-
-
-responsiveWindow();         // run the responsive function
-
 
 // options dropdown
-    $('.options-head').click(function () {                          // when the options header is clicked
+var scrollOptions = function(){
       if ($(".options-head .arrow").hasClass('unpressed')) {        // if the arrow was unpressed
         $(".options-head .arrow").removeClass("unpressed");         // remove the unpressed class
         $(".options-head .arrow").addClass("pressed");              // add the pressed class
@@ -338,10 +287,16 @@ responsiveWindow();         // run the responsive function
         $( ".options" ).stop(true, true).slideUp();                 // slide the options away
         showOptions = false;                                        // toggle them as hidden
       };
+
+}
+
+    $('.options-head').click(function () {                          // when the options header is clicked
+        scrollOptions();
     });
 
+
 // index dropdown (similar to options)
-// not currently in use
+/** not currently in use
     $('.index-head').click(function () {
       if ($(".index-head .arrow").hasClass('unpressed')) {
         $(".index-head .arrow").removeClass("unpressed");
@@ -358,8 +313,95 @@ responsiveWindow();         // run the responsive function
         showIndex = false;
       };
     });
+*/
+
+///responsiveness code
+//small height = 500px
+var windowHeight = $(window).height();                              // grab window height
+var windowWidth = $(window).width();                                // grab window width
+var headerHeight = $('.row.first').height();                        // grab height of the header
+var footerHeight = $('footer').height();                            // grab height of the footer
+var itemsHeight = windowHeight - (headerHeight + footerHeight);     // calculate available height for the items
+var shortDisplayHeight = 500;                                       // set the threshold for short display - note to self learn how to spell threshold
+var superShortDisplayHeight = 400;                                  // set threshold for super-small display
+var shortDisplay = false;                                           // short display mode?
+var thinDisplayWidth = "64.063em";                                  // set threshold for non-desktop media query
+var thinDisplay ;                                                    // thin display mode?
+
+// function which controls javascript based responsiveness
+// called on load and on window resize
+var responsiveWindow = function(){
+    
+    thinDisplay = Modernizr.mq('(max-width: ' + thinDisplayWidth +')'); // check if it's true with modernizr.mq
+
+    if (windowHeight < shortDisplayHeight) {    // if the window is lower than the threshold for short display
+        shortDisplay = true;                    // set it into short mode
+    }
+    else{                                       // otherwise
+        shortDisplay = false;                   // keep it in tall mode
+    };
+
+    if (windowHeight < shortDisplayHeight && windowHeight > superShortDisplayHeight) {      // if the window is between short and super short
+        $('.items').css('max-height', itemsHeight - 45 + 'px');                             // set the height of items accordingly **figure out where that 40px comes from maybe?
+    };
+
+    if (windowHeight < superShortDisplayHeight) {      // if the display is super short 
+        $('.items').css('max-height', '185px');        // set the height of items list to minimum of 185
+    };
+
+    if (windowHeight > shortDisplayHeight) {                        // if the display is normal sized
+        $('.items').css('max-height', itemsHeight - 100 + 'px');    // set the height of items accordingly ** figure out where the extra 100 are from...
+    };
+
+    if (thinDisplay === true) {
+        showOptions = false;
+    };
+
+/*
+    if (thinDisplay === true) {         // if the media query for non-desktop width is hit
+        if (showOptions === true) {
+            showOptions = false;
+            console.log('what');
+            scrollOptions();
+
+        };
+    }
+    else{
+        if (showOptions === false) {
+            showOptions = true;
+            scrollOptions();
+        };
+
+    }
+*/
+
+};
+
+
+
+$( window ).resize(function() {                                     // on window resize
+    windowHeight = $(window).height();                              // reset window height 
+    windowWidth = $(window).width();                                // reset window width
+    headerHeight = $('.row.first').height();                        // reset header height 
+    footerHeight = $('footer').height();                            // reset footer height
+    itemsHeight = windowHeight - (headerHeight + footerHeight);     // reset height available for items
+    responsiveWindow();                                             // re-run the responsive function
+
+});
+
+
+responsiveWindow();         // run the responsive function
 
 
 
 
 
+
+
+//scroll functions
+
+$(window).scroll(function() {
+    if (thinDisplay && $(window).scrollTop() > 0 && showOptions === true ) {
+        scrollOptions();
+    };
+});

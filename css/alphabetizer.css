@@ -129,9 +129,6 @@ h3 {
 	color: #ccc;
 }
 
-.mobile-options {
-	display: none;
-}
 
 .black {
 	color: #000;
@@ -167,6 +164,16 @@ ul .arrow.pressed {
   display: inline;
 }
 
+.options-container-mobile .options {
+	display: none;
+    background-color: #E1F8FF;
+    padding-top: 1.25rem;
+}
+
+.options-container-mobile .options-head {
+    margin-top: 0;
+    padding: 5px 0 0 5px;
+}
 
 ul.alphabet {
 	list-style: none;
@@ -228,6 +235,11 @@ ul.list.deletable li:active{
 		display: none;
 	}
 
+	.row.first{
+		padding-top: 20px;
+	}
+
+
 }
 
 
@@ -276,6 +288,8 @@ ul.list.deletable li:active{
 
 /*on large screens*/
 @media only screen and (min-width: 64.063em) {
-
+.options-container-mobile {
+	display: none;
+}
 
 }

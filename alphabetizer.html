@@ -15,7 +15,15 @@
 </head>
 
 <body class="lightbox">
-
+    <div class="options-container-mobile">
+      <h3 class="options-head inert"><span class="arrow unpressed"><span class="down">+</span><span class="up">-</span></span><span class="black"> Options </span></h3>
+      <div class="options">
+        <label><input type="checkbox" class="deletable-box" name="box1" value="first_checkbox"> deletable items</label><br>
+        <label><input type="checkbox" class="alphabet-box" name="box1" value="second_checkbox" checked="checked"> alphabetize</label><br>
+        <label><input type="checkbox" class="shuffle-box" name="box1" value="third_checkbox"> shuffle</label><br>
+        <button class="clear-button">clear all entries</button>
+      </div>
+    </div>
 <div class="row first">
   <div class="large-8 large-offset-2 columns text-center">
     <h1>Alphabetizer</h1>
@@ -92,7 +100,8 @@
   </div>
 </footer>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script>window.jQuery || document.write('<script src="js/vendor/jquery.js">\x3C/script>')</script>
+<script>if (!window.jQuery) { document.write('<script src="vendor/jquery.js"><\/script>'); }
+</script>
 <script src="js/alphabetizer.js"></script>
 </body>
 </html>
