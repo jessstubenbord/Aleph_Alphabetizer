@@ -395,9 +395,6 @@ responsiveWindow();         // run the responsive function
 
 
 
-
-
-
 //scroll functions
 
 $(window).scroll(function() {
@@ -405,3 +402,4 @@ $(window).scroll(function() {
         scrollOptions();
     };
 });
+
