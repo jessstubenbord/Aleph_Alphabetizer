@@ -23,7 +23,8 @@ var savedItems = false;
 
 // Used variables
 var inputHtmlLocation = '.css-input';
-var listHtmlLocation = '.list'
+var listContainerHtmlLocation = '.items';
+var listHtmlLocation = '.list';
 var itemsInArray = 0;
 var mostRecentItem;
 var mostRecentItemPosition;
@@ -121,11 +122,14 @@ var displayItems = function() {
         scrollToPosition = 0                                                // make the scroll target the top
     };
 
-    $('.items').stop(true, true).animate({
-        scrollTop: $('li.' + scrollToPosition).position().top   // Animated scroll to recent item http://stackoverflow.com/a/33114021/1973361
-    }, 500); 
+    if (items.length > 0) {                                         // as long is there is more than 0 items in the list
+        $(listContainerHtmlLocation).stop(true, true).animate({
+            scrollTop: $('li.' + scrollToPosition).position().top   // Animate scroll to recent item http://stackoverflow.com/a/33114021/1973361
+        }, 500);             
+    };
 
-//    $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
+
+//    $(listContainerHtmlLocation).scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
 };
 
 
@@ -350,15 +354,15 @@ var responsiveWindow = function(){
     };
 
     if (windowHeight < shortDisplayHeight && windowHeight > superShortDisplayHeight) {      // if the window is between short and super short
-        $('.items').css('max-height', itemsHeight - 45 + 'px');                             // set the height of items accordingly **figure out where that 40px comes from maybe?
+        $(listContainerHtmlLocation).css('max-height', itemsHeight - 45 + 'px');            // set the height of items accordingly **figure out where that 40px comes from maybe?
     };
 
-    if (windowHeight < superShortDisplayHeight) {      // if the display is super short 
-        $('.items').css('max-height', '185px');        // set the height of items list to minimum of 185
+    if (windowHeight < superShortDisplayHeight) {                       // if the display is super short 
+        $(listContainerHtmlLocation).css('max-height', '185px');        // set the height of items list to minimum of 185
     };
 
-    if (windowHeight > shortDisplayHeight) {                        // if the display is normal sized
-        $('.items').css('max-height', itemsHeight - 100 + 'px');    // set the height of items accordingly ** figure out where the extra 100 are from...
+    if (windowHeight > shortDisplayHeight) {                                        // if the display is normal sized
+        $(listContainerHtmlLocation).css('max-height', itemsHeight - 100 + 'px');   // set the height of items accordingly ** figure out where the extra 100 are from...
     };
 
     if (thinDisplay === true) {     // if the media query for non-desktop width is hit
@@ -405,9 +409,24 @@ responsiveWindow();         // run the responsive function
 
 //scroll functions
 //this should slide options up if you're on mobile and scroll down
-$(window).scroll(function() {
+//scroll code adapted from http://stackoverflow.com/a/7392655/1973361
+var scrollTimer = null;
+$(window).scroll(function () {
+    if (scrollTimer) {
+        clearTimeout(scrollTimer);   // clear any previous pending timer
+    }
+    scrollTimer = setTimeout(handleScroll, 100);   // set new timer
+});
+
+function handleScroll() {
+    scrollTimer = null;
+    var optionsTop = 10;
+
     if (thinDisplay && $(window).scrollTop() > 0 && showOptions === true ) {        
         scrollOptions('options-container-mobile');
     };
-});
+}
+
+
+
 
