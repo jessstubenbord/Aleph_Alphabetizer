@@ -3,7 +3,7 @@
 var alphabetizeOn = true;
 var instantEntry = true;
 
-//secodary features
+//secondary features
 var activeEntry = false;
 var multiEntry = false;
 
@@ -22,9 +22,13 @@ var savedItems = false;
 
 
 // Used variables
+var inputHtmlLocation = '.css-input';
+var listHtmlLocation = '.list'
 var itemsInArray = 0;
 var mostRecentItem;
 var mostRecentItemPosition;
+var mininumPositionsFromTop = 2;
+var positionsToSubtract = 2;
 
 // Magical array where everything takes place
 var items = new Array();
@@ -55,7 +59,7 @@ function shuffleArray(array) {
 //This function is the "display engine"
 var displayItems = function() {
 
-    var $list = $('.list');                                         //the list will will be placed & displayed in .list
+    var $list = $(listHtmlLocation);                                         //the list will will be placed & displayed in .list
 
 
     // This is where the options/features list starts
@@ -102,19 +106,19 @@ var displayItems = function() {
 
     mostRecentItemPosition = items.indexOf(mostRecentItem);             // sets most recent item position so that it can be highlited in list *not scoped correctly
     if (activeEntry === true) {                                         // if active entry is on
-        $('.list' + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible
+        $(listHtmlLocation + ' .' + mostRecentItemPosition).addClass('active');  // make active item visible
     };
 
 
 //start scrolling the list to current item
 
-    var scrollToPosition = mostRecentItemPosition;                  // set the target to scroll to
+    var scrollToPosition = mostRecentItemPosition;                          // set the target to scroll to
 
-    if (scrollToPosition >= 2) {
-        scrollToPosition = mostRecentItemPosition - 2;              // subtract 2 positions if possible to give context
+    if (scrollToPosition >= mininumPositionsFromTop) {                      // if the item's (2) or more down from the top
+        scrollToPosition = mostRecentItemPosition - positionsToSubtract;    // subtract (2) positions to give context
     }
-    else{
-        scrollToPosition = 0                                        // otherwise make it the top
+    else{                                                                   // otherwise (if there's less than (2) items above it)
+        scrollToPosition = 0                                                // make the scroll target the top
     };
 
     $('.items').stop(true, true).animate({
@@ -122,13 +126,13 @@ var displayItems = function() {
     }, 500); 
 
 //    $('.items').scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
-
-
 };
+
+
 
 //grab items from input
 //This segment listens to and manipulates the input box... and does some stuff with what it grabs
-$('.css-input').on('keyup', function (event) {              // listen to each keypress in the input box
+$(inputHtmlLocation).on('keyup', function (event) {              // listen to each keypress in the input box
     //console.log('length: ' + items.length + ' in array: ' + itemsInArray);
     //console.log(items);
 
@@ -147,18 +151,18 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     activeEntry = true;                                 // set active to on
 
 
-// special cases for certain keys/combos
+    // special cases for certain keys/combos
 
     if ( (event.which === 13 || event.which === 10) && !event.shiftKey) {   // if enter is pressed
         $input.val(' ');                                                    // empty the input (space prevents placeholder text from displaying)
         itemsInArray++;                                                     // add one to the item counter
         //console.log('enter');
-        $('.list' + ' .' + mostRecentItemPosition).removeClass('active');   // remove active class from now inactive item
+        $(listHtmlLocation + ' .' + mostRecentItemPosition).removeClass('active');   // remove active class from now inactive item
         activeEntry = false;                                                // set active to off
     };
 
     if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
-    	$('.css-input').addClass('multi-entry');			// Activate multi-entry mode
+    	$(inputHtmlLocation).addClass('multi-entry');			// Activate multi-entry mode
         $('.hint-box').removeClass('default');              // de-ctivate default hint
         $('.hint-box').addClass('multi');                   // Activate multi-entry hint
 
@@ -167,16 +171,16 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     }
 
     if (event.which === 27) {                               // if escape is pressed
-        $('.css-input').removeClass('multi-entry');         // de-activate multi-entry mode
+        $(inputHtmlLocation).removeClass('multi-entry');         // de-activate multi-entry mode
         $('.hint-box').removeClass('multi');                // de-activate multi-entry hint
         $('.hint-box').addClass('default');                 // activate default hint
         multiEntry = false;                                 // switch it off
         instantEntry = true                                 // swich back to instant mode
         var $input = $(event.target);                       // take the reference to the inputbox
-        $input.val('');                                     // clear the input box
+        $input.val('');                                     // clear the input box completely
     }
 
-//adding items to the array
+    //adding items to the array
     //with multi-entry
     if (multiEntry === true) {                                  // if multi-entry is active
         if (event.which === 13 && !event.shiftKey) {            // if enter is pressed
@@ -198,7 +202,7 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
     else{                                                       //  for evrything else
             var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
             $.merge(items, itemsSplit);                         // add split items to array
-//        items.push(itemTrimmed);// just add trimed items
+    //        items.push(itemTrimmed);// just add trimed items
     }
 
 
@@ -209,7 +213,7 @@ $('.css-input').on('keyup', function (event) {              // listen to each ke
 
 });
 
-$('.css-input').on('keydown', function (event) {            // listen to each keydown in the input box
+$(inputHtmlLocation).on('keydown', function (event) {            // listen to each keydown in the input box
     if (event.which === 13 && !event.shiftKey) {            // if it's enter & not shift enter
         event.preventDefault();                             // stop enter from being entered
     };
@@ -260,7 +264,7 @@ $(".shuffle-box").change(function() {       // if shuffle is toggled
 $(".clear-button").click(function(){        // if clear button is clicked
     items.length = 0;                       // clear all data in items array
     itemsInArray = 0;                       // reset itemsInArray variable
-    $input.val('');                         // empty the input
+    $(inputHtmlLocation).val('')            // empty the input
     displayItems();                         // display items
 });
 
@@ -272,27 +276,30 @@ $(".clear-button").click(function(){        // if clear button is clicked
 
 
 // options dropdown
-var scrollOptions = function(){
-      if ($(".options-head .arrow").hasClass('unpressed')) {        // if the arrow was unpressed
-        $(".options-head .arrow").removeClass("unpressed");         // remove the unpressed class
-        $(".options-head .arrow").addClass("pressed");              // add the pressed class
-        $(".options-head").removeClass("inert");                    // remove the inert(unused) class
-        $( ".options").stop(true, true).slideDown();                // slide down the options
+var scrollOptions = function(chosenClass){
+      if ($('.' + chosenClass + ' .options-head .arrow').hasClass('unpressed')) {        // if the arrow was unpressed
+        $('.' + chosenClass + ' .options-head .arrow').removeClass('unpressed');         // remove the unpressed class
+        $('.' + chosenClass + ' .options-head .arrow').addClass('pressed');              // add the pressed class
+        $('.' + chosenClass + ' .options-head').removeClass('inert');                    // remove the inert(unused) class
+        $('.' + chosenClass + ' .options').stop(true, true).slideDown();                // slide down the options
         showOptions = true;                                         // toggle them as shown
       }
       else {                                                        // otherwise (if the arrow was pressed)
-        $(".options-head .arrow").removeClass("pressed");           // remove pressed class
-        $(".options-head .arrow").addClass("unpressed");            // add unpressed class
-        $(".options-head").addClass("inert");                       // add inert class
-        $( ".options" ).stop(true, true).slideUp();                 // slide the options away
+        $('.' + chosenClass + ' .options-head .arrow').removeClass('pressed');           // remove pressed class
+        $('.' + chosenClass + ' .options-head .arrow').addClass('unpressed');            // add unpressed class
+        $('.' + chosenClass + ' .options-head').addClass('inert');                       // add inert class
+        $('.' + chosenClass + ' .options').stop(true, true).slideUp();                 // slide the options away
         showOptions = false;                                        // toggle them as hidden
       };
 
 }
 
-    $('.options-head').click(function () {                          // when the options header is clicked
-        scrollOptions();
-    });
+$('.options-container .options-head').click(function () {                          // when the options header is clicked
+    scrollOptions('options-container');
+});
+$('.options-container-mobile .options-head').click(function () {                          // when the options header is clicked
+    scrollOptions('options-container-mobile');
+});
 
 
 // index dropdown (similar to options)
@@ -316,7 +323,6 @@ var scrollOptions = function(){
 */
 
 ///responsiveness code
-//small height = 500px
 var windowHeight = $(window).height();                              // grab window height
 var windowWidth = $(window).width();                                // grab window width
 var headerHeight = $('.row.first').height();                        // grab height of the header
@@ -336,9 +342,11 @@ var responsiveWindow = function(){
 
     if (windowHeight < shortDisplayHeight) {    // if the window is lower than the threshold for short display
         shortDisplay = true;                    // set it into short mode
+        positionsToSubtract = 1;            // set scrolltoposition to 0 (places the most recent item at the very top) 
     }
     else{                                       // otherwise
         shortDisplay = false;                   // keep it in tall mode
+        positionsToSubtract = 2;                   // set scrollToPosition back to 2
     };
 
     if (windowHeight < shortDisplayHeight && windowHeight > superShortDisplayHeight) {      // if the window is between short and super short
@@ -353,7 +361,7 @@ var responsiveWindow = function(){
         $('.items').css('max-height', itemsHeight - 100 + 'px');    // set the height of items accordingly ** figure out where the extra 100 are from...
     };
 
-    if (thinDisplay === true) {
+    if (thinDisplay === true) {     // if the media query for non-desktop width is hit
         showOptions = false;
     };
 
@@ -396,10 +404,10 @@ responsiveWindow();         // run the responsive function
 
 
 //scroll functions
-
+//this should slide options up if you're on mobile and scroll down
 $(window).scroll(function() {
-    if (thinDisplay && $(window).scrollTop() > 0 && showOptions === true ) {
-        scrollOptions();
+    if (thinDisplay && $(window).scrollTop() > 0 && showOptions === true ) {        
+        scrollOptions('options-container-mobile');
     };
 });
 
