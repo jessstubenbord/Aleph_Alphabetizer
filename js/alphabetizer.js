@@ -60,6 +60,9 @@ function shuffleArray(array) {
 
 //display items according to preset options
 //This function is the "display engine"
+//some alphabetization code repurposed from
+//http://stackoverflow.com/a/25431980
+//http://stackoverflow.com/a/9645447
 var displayItems = function() {
 
     var $list = $(listHtmlLocation);                                         //the list will will be placed & displayed in .list
@@ -138,9 +141,8 @@ var displayItems = function() {
 
 //grab items from input
 //This segment listens to and manipulates the input box... and does some stuff with what it grabs
+
 $(inputHtmlLocation).on('keyup', function (event) {              // listen to each keypress in the input box
-    //console.log('length: ' + items.length + ' in array: ' + itemsInArray);
-    //console.log(items);
 
     if (items.length > itemsInArray ) {                 // if an item has been added to the array temporarily
         if (mostRecentItemPosition > -1) {
@@ -163,8 +165,8 @@ $(inputHtmlLocation).on('keyup', function (event) {              // listen to ea
         $input.val(' ');                                                    // empty the input (space prevents placeholder text from displaying)
         itemsInArray++;                                                     // add one to the item counter
         //console.log('enter');
-        $(listHtmlLocation + ' .' + mostRecentItemPosition).removeClass('active');   // remove active class from now inactive item
-        activeEntry = false;                                                // set active to off
+        $(listHtmlLocation + ' .' + mostRecentItemPosition).removeClass('active');  // remove active class from now inactive item
+        activeEntry = false;                                                        // set active to off
     };
 
     if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
@@ -177,7 +179,7 @@ $(inputHtmlLocation).on('keyup', function (event) {              // listen to ea
     }
 
     if (event.which === 27) {                               // if escape is pressed
-        $(inputHtmlLocation).removeClass('multi-entry');         // de-activate multi-entry mode
+        $(inputHtmlLocation).removeClass('multi-entry');    // de-activate multi-entry mode
         $('.hint-box').removeClass('multi');                // de-activate multi-entry hint
         $('.hint-box').addClass('default');                 // activate default hint
         multiEntry = false;                                 // switch it off
@@ -192,7 +194,6 @@ $(inputHtmlLocation).on('keyup', function (event) {              // listen to ea
         if (event.which === 13 && !event.shiftKey) {            // if enter is pressed
             var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);  // split at each line break
             $.merge(items, itemsSplit);                         // add split items to array
-            //console.log('pushed: ' + itemsSplit);
             $input.val(' ');                                    // empty the input (space prevents placeholder text from displaying)
             itemsInArray++;                                     // increase the "official" item count
             ///console.log('enter')
@@ -214,12 +215,10 @@ $(inputHtmlLocation).on('keyup', function (event) {              // listen to ea
 
     
     displayItems();                                         // display all of the items
-    //console.log(items);
-    //console.log('-----'); 
 
 });
 
-$(inputHtmlLocation).on('keydown', function (event) {            // listen to each keydown in the input box
+$(inputHtmlLocation).on('keydown', function (event) {       // listen to each keydown in the input box
     if (event.which === 13 && !event.shiftKey) {            // if it's enter & not shift enter
         event.preventDefault();                             // stop enter from being entered
     };
@@ -275,15 +274,9 @@ $(".clear-button").click(function(){        // if clear button is clicked
 });
 
 
-//some alphabetization code repurposed from
-//http://stackoverflow.com/a/25431980
-//http://stackoverflow.com/a/9645447
-
-
 
 // options dropdown
 var scrollOptions = function(chosenClass){
-    //alert(' options have been toggled and showOptions = ' + showOptions);
       if ( ( $('.' + chosenClass + ' .options-head .arrow').hasClass('unpressed') || forceShowOptions) && !forceHideOptions ) {       // if the arrow was unpressed or options are forced
         $('.' + chosenClass + ' .options-head .arrow').removeClass('unpressed');        // remove the unpressed class
         $('.' + chosenClass + ' .options-head .arrow').addClass('pressed');             // add the pressed class
@@ -305,10 +298,10 @@ var scrollOptions = function(chosenClass){
 }
 
 $('.options-container .options-head').click(function () {                           // when the options header is clicked
-    scrollOptions('options-container');
+    scrollOptions('options-container');                                             // slide options
 });
 $('.options-container-mobile .options-head').click(function () {                    // when the options header is clicked
-    scrollOptions('options-container-mobile');
+    scrollOptions('options-container-mobile');                                      // slide options
 });
 
 
@@ -333,81 +326,79 @@ $('.options-container-mobile .options-head').click(function () {                
 */
 
 ///responsiveness code
-var windowHeight = $(window).height();                              // grab window height
-var windowWidth = $(window).width();                                // grab window width
-var mobileOptionsHeight = $('.options-container-mobile .options-head').height() + 10; // grab height of the mobile options(closed + 5 padding + 5 margin)
-var headerHeight = $('.row.first').height();                        // grab height of the header
-var topBorderHeight = $('.top-border').height();
-var footerHeight = $('footer').height();                            // grab height of the footer
-var itemsHeight = windowHeight - (headerHeight + topBorderHeight + footerHeight);     // calculate available height for the items
+var windowHeight = $(window).height();                                                  // grab window height
+var windowWidth = $(window).width();                                                    // grab window width
+var mobileOptionsHeight = $('.options-container-mobile .options-head').height() + 10;   // grab height of the mobile options(closed + 5 padding + 5 margin)
+var headerHeight = $('.row.first').height();                                            // grab height of the header
+var topBorderHeight = $('.top-border').height();                                        // grab height of that top bordery thing
+var footerHeight = $('footer').height();                                                // grab height of the footer
+var itemsHeight = windowHeight - (headerHeight + topBorderHeight + footerHeight);       // calculate available height for the items
 var mobileItemsHeight = itemsHeight - mobileOptionsHeight;
 
 var shortDisplayHeight = 500;                                       // set the threshold for short display - note to self learn how to spell threshold
 var shortDisplay = false;                                           // short display mode?
 var thinDisplayWidth = "64.063em";                                  // set threshold for non-desktop media query
-var thinDisplay ;                                                    // thin display mode?
+var thinDisplay = Modernizr.mq('(max-width: ' + thinDisplayWidth +')'); // check if it's thinDisplay with modernizr.mq                                                    // thin display mode?
+var wasThinDisplay;                                                 // hold previous value of thinDisplay here
+
+
+if (thinDisplay === true) {     // if the media query for non-desktop width is hit on initial page load
+    showOptions = false;        // show options is set to false
+};
+
 
 // function which controls javascript based responsiveness
 // called on load and on window resize
 var responsiveWindow = function(){
     
-    thinDisplay = Modernizr.mq('(max-width: ' + thinDisplayWidth +')'); // check if it's true with modernizr.mq
+    wasThinDisplay = thinDisplay;                                           // hold the previous value of thinDisplay
+    thinDisplay = Modernizr.mq('(max-width: ' + thinDisplayWidth +')');     // check if it is thinDisplay
 
     if (windowHeight < shortDisplayHeight) {    // if the window is lower than the threshold for short display
         shortDisplay = true;                    // set it into short mode
-        positionsToSubtract = 1;            // set scrolltoposition to 0 (places the most recent item at the very top) 
+        positionsToSubtract = 1;                // set scroll to position to 0 (places the most recent item at the very top) 
     }
     else{                                       // otherwise
         shortDisplay = false;                   // keep it in tall mode
-        positionsToSubtract = 2;                   // set scrollToPosition back to 2
+        positionsToSubtract = 2;                // set scroll To Position back to 2
     };
 
-    if (windowHeight < shortDisplayHeight && windowHeight > superShortDisplayHeight) {      // if the window is between short and super short
-        $(listContainerHtmlLocation).css('max-height', itemsHeight - 45 + 'px');            // set the height of items accordingly **figure out where that 40px comes from maybe?
-    };
-
-    if (windowHeight < superShortDisplayHeight) {                       // if the display is super short 
-        $(listContainerHtmlLocation).css('max-height', '185px');        // set the height of items list to minimum of 185
-    };
-
-    if (windowHeight > shortDisplayHeight) {                                        // if the display is normal sized
-        $(listContainerHtmlLocation).css('max-height', itemsHeight - 100 + 'px');   // set the height of items accordingly ** figure out where the extra 100 are from...
-    };
-
-    if (thinDisplay === true) {     // if the media query for non-desktop width is hit
-        showOptions = false;
-    };
-
-/*
-    if (thinDisplay === true) {         // if the media query for non-desktop width is hit
-        if (showOptions === true) {
-            showOptions = false;
-            console.log('what');
-            scrollOptions();
-
-        };
+    if (thinDisplay === true) {                                                         // if mobile width
+        $(listContainerHtmlLocation).css('max-height', mobileItemsHeight + 'px');       // set the height of items to take into account the options at the top
     }
-    else{
-        if (showOptions === false) {
-            showOptions = true;
-            scrollOptions();
-        };
-
+    else{                                                                               // otherwise
+        $(listContainerHtmlLocation).css('max-height', itemsHeight + 'px');             // set the height of items accordingly
     }
-*/
+
+
+    if (thinDisplay === false && wasThinDisplay === true){      // if coming from mobile size to desktop size
+        showOptions = true;                                     // set show options on
+        forceShowOptions =  true;                               // force show
+        scrollOptions('options-container');                     // the desktop options
+    }
+
+    if (thinDisplay === true && wasThinDisplay === false ) {    // if coming from desktop size to mobile size 
+        showOptions = false;                                    // set options off
+        forceHideOptions = true;                                // force hide
+        scrollOptions('options-container-mobile');              // the mobile options
+
+    };
 
 };
 
 
 
-$( window ).resize(function() {                                     // on window resize
-    windowHeight = $(window).height();                              // reset window height 
-    windowWidth = $(window).width();                                // reset window width
-    headerHeight = $('.row.first').height();                        // reset header height 
-    footerHeight = $('footer').height();                            // reset footer height
-    itemsHeight = windowHeight - (headerHeight + footerHeight);     // reset height available for items
-    responsiveWindow();                                             // re-run the responsive function
+$(window).resize(function() {                                                           // on window resize
+    windowHeight = $(window).height();                                                  // reset window height 
+    windowWidth = $(window).width();                                                    // reset window width
+    mobileOptionsHeight = $('.options-container-mobile .options-head').height() + 10;   // grab height of the mobile options(closed + 5 padding + 5 margin)
+    headerHeight = $('.row.first').height();                                            // grab height of the header
+    topBorderHeight = $('.top-border').height();                                        // grab the height of that top divider thing
+    footerHeight = $('footer').height();                                                // grab height of the footer
+    itemsHeight = windowHeight - (headerHeight + topBorderHeight + footerHeight);       // calculate available height for the items
+    mobileItemsHeight = itemsHeight - mobileOptionsHeight;                              // calculate available including top options
 
+    responsiveWindow();                                             // re-run the responsive function
 });
 
 
@@ -419,20 +410,21 @@ responsiveWindow();         // run the responsive function
 //scroll functions
 //this should slide options up if you're on mobile and scroll down
 //scroll code adapted from http://stackoverflow.com/a/7392655/1973361
+
 var scrollTimer = null;
 $(window).scroll(function () {
     if (scrollTimer) {
-        clearTimeout(scrollTimer);   // clear any previous pending timer
+        clearTimeout(scrollTimer);                  // clear any previous pending timer
     }
-    scrollTimer = setTimeout(handleScroll, 100);   // set new timer
+    scrollTimer = setTimeout(handleScroll, 100);    // set new timer
 });
 
 function handleScroll() {
     scrollTimer = null;
     var optionsTop = 10;
-
-    if (thinDisplay && $(window).scrollTop() > 0 && showOptions === true ) {        
-        scrollOptions('options-container-mobile');
+    if (thinDisplay === true && $(window).scrollTop() > 0 && showOptions === true ) {   // if thinDisplay is on and showOptions is true and scrollTop is greater than 0    
+        forceHideOptions = true;
+        scrollOptions('options-container-mobile');                                      //hide the options
     };
 }
 
