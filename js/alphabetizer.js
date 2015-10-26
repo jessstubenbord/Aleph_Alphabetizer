@@ -13,6 +13,8 @@ var clearData = false;
 
 //User Interface
 var showOptions = true;
+var forceHideOptions = false;
+var forceShowOptions = false;
 var showIndex = false;
 
 
@@ -281,27 +283,31 @@ $(".clear-button").click(function(){        // if clear button is clicked
 
 // options dropdown
 var scrollOptions = function(chosenClass){
-      if ($('.' + chosenClass + ' .options-head .arrow').hasClass('unpressed')) {        // if the arrow was unpressed
-        $('.' + chosenClass + ' .options-head .arrow').removeClass('unpressed');         // remove the unpressed class
-        $('.' + chosenClass + ' .options-head .arrow').addClass('pressed');              // add the pressed class
-        $('.' + chosenClass + ' .options-head').removeClass('inert');                    // remove the inert(unused) class
+    //alert(' options have been toggled and showOptions = ' + showOptions);
+      if ( ( $('.' + chosenClass + ' .options-head .arrow').hasClass('unpressed') || forceShowOptions) && !forceHideOptions ) {       // if the arrow was unpressed or options are forced
+        $('.' + chosenClass + ' .options-head .arrow').removeClass('unpressed');        // remove the unpressed class
+        $('.' + chosenClass + ' .options-head .arrow').addClass('pressed');             // add the pressed class
+        $('.' + chosenClass + ' .options-head').removeClass('inert');                   // remove the inert(unused) class
         $('.' + chosenClass + ' .options').stop(true, true).slideDown();                // slide down the options
-        showOptions = true;                                         // toggle them as shown
+        showOptions = true;                                                             // toggle them as shown
+        forceShowOptions = false;
       }
-      else {                                                        // otherwise (if the arrow was pressed)
-        $('.' + chosenClass + ' .options-head .arrow').removeClass('pressed');           // remove pressed class
-        $('.' + chosenClass + ' .options-head .arrow').addClass('unpressed');            // add unpressed class
-        $('.' + chosenClass + ' .options-head').addClass('inert');                       // add inert class
-        $('.' + chosenClass + ' .options').stop(true, true).slideUp();                 // slide the options away
-        showOptions = false;                                        // toggle them as hidden
+      else {                                                                        // otherwise (if the arrow was pressed)
+        $('.' + chosenClass + ' .options-head .arrow').removeClass('pressed');      // remove pressed class
+        $('.' + chosenClass + ' .options-head .arrow').addClass('unpressed');       // add unpressed class
+        $('.' + chosenClass + ' .options-head').addClass('inert');                  // add inert class
+        $('.' + chosenClass + ' .options').stop(true, true).slideUp();              // slide the options away
+        showOptions = false;                                                        // toggle them as hidden
+        forceHideOptions = false;                                                   // turn force hide off
       };
+    //alert(' options have been toggled and chosenClass=' + chosenClass + 'scroll: ' + $(window).scrollTop() + ' thinDisplay: ' + thinDisplay + ' showOptions: ' + showOptions);
 
 }
 
-$('.options-container .options-head').click(function () {                          // when the options header is clicked
+$('.options-container .options-head').click(function () {                           // when the options header is clicked
     scrollOptions('options-container');
 });
-$('.options-container-mobile .options-head').click(function () {                          // when the options header is clicked
+$('.options-container-mobile .options-head').click(function () {                    // when the options header is clicked
     scrollOptions('options-container-mobile');
 });
 
@@ -329,11 +335,14 @@ $('.options-container-mobile .options-head').click(function () {                
 ///responsiveness code
 var windowHeight = $(window).height();                              // grab window height
 var windowWidth = $(window).width();                                // grab window width
+var mobileOptionsHeight = $('.options-container-mobile .options-head').height() + 10; // grab height of the mobile options(closed + 5 padding + 5 margin)
 var headerHeight = $('.row.first').height();                        // grab height of the header
+var topBorderHeight = $('.top-border').height();
 var footerHeight = $('footer').height();                            // grab height of the footer
-var itemsHeight = windowHeight - (headerHeight + footerHeight);     // calculate available height for the items
+var itemsHeight = windowHeight - (headerHeight + topBorderHeight + footerHeight);     // calculate available height for the items
+var mobileItemsHeight = itemsHeight - mobileOptionsHeight;
+
 var shortDisplayHeight = 500;                                       // set the threshold for short display - note to self learn how to spell threshold
-var superShortDisplayHeight = 400;                                  // set threshold for super-small display
 var shortDisplay = false;                                           // short display mode?
 var thinDisplayWidth = "64.063em";                                  // set threshold for non-desktop media query
 var thinDisplay ;                                                    // thin display mode?

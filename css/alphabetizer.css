@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6 {
 	text-rendering: optimizeLegibility;
 }
 
-.row.first{
+.header {
 	padding-top: 60px;
 }
 
@@ -175,6 +175,10 @@ ul .arrow.pressed {
     padding: 5px 0 0 5px;
 }
 
+.options-container-mobile h3.options-head {
+    margin-bottom: 5px;
+}
+
 ul.alphabet {
 	list-style: none;
 	font-size: 22px;
@@ -224,6 +228,7 @@ ul.list.deletable li:active{
 
 .items {
     height: 100%;
+    min-height: 100px;
     /*max-height: 450px;*/
     overflow: auto;
 }
@@ -235,7 +240,7 @@ ul.list.deletable li:active{
 		display: none;
 	}
 
-	.row.first{
+	.header {
 		padding-top: 20px;
 	}
 
@@ -246,7 +251,7 @@ ul.list.deletable li:active{
 /*on short screens*/
 @media only screen and (max-height: 500px) {
 
-	.row.first {
+	.header {
 	    padding-top: 0;
 	}
 
@@ -281,6 +286,10 @@ ul.list.deletable li:active{
 
 	.hint {
 		display: none;
+	}
+
+	footer p:last-child{
+		margin-bottom: 0;
 	}
 
 }
