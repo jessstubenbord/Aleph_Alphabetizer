@@ -191,13 +191,14 @@ ul .arrow.pressed {
 .index{
 	height: 200px;
 	overflow: auto;	
+	position: relative;
 }
 
 ul.alphabet {
 	list-style: none;
 	font-size: 1.375rem;
+	font-size: 1.175rem;
 	margin: 0;
-
 }
 
 .alphabet li{
@@ -211,6 +212,17 @@ ul.alphabet {
 	border-bottom: 2px solid #ccc;
 	border-left: 2px solid #ccc;*/
 	background-color: #9DE8FF;
+}
+
+.highlighter.active{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height:20px;
+	background-color: #9DE8FF;
+	z-index: -1;
+
 }
 
 ul.list {

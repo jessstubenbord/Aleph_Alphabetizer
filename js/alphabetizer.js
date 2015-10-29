@@ -452,31 +452,39 @@ var itemsScrollBottom;
 var alphabetScrollTop;
 var alphabetScrollBottom;
 var itemsInnerHeight;
+var itemsViewRatio;
 var alphabetInnerHeight;
-
+var indexHighlighter = $('.highlighter.active');
 
 
 var changeListLength = function(){
     itemsInnerHeight = $(listHtmlLocation).height();
     alphabetInnerHeight = $('.alphabet').height();
     indexHeight = $('.index').height();
+    itemsViewRatio = itemsHeight / itemsInnerHeight;
+    indexHighlighterHeight = itemsViewRatio * alphabetInnerHeight;
+    indexHighlighter.css('height', indexHighlighterHeight);       // set the height of items to take into account the options at the top
+
 };
 
 changeListLength();
 
+
 //linking up the index
 $('.items').on('scroll', function () {
     itemsScrollTop = $(this).scrollTop();
-    itemsScrollBottom = itemsScrollValue - itemsHeight; 
+    itemsScrollBottom = itemsScrollTop - itemsHeight; 
 
 
     //var scrollBottom = $(window).scrollTop() + $(window).height();
     //itemsScrollValue / itemsInnerHeight = x / alphabetInnerHeight
 
     alphabetScrollTop = ( itemsScrollTop / itemsInnerHeight ) * alphabetInnerHeight; 
-    alphabetScrollBottom = alphabetScrollValue - indexHeight;
+    alphabetScrollBottom = alphabetScrollTop - indexHeight;
 
-    $('.index').scrollTop(alphabetScrollTop); //alphabet scroll top
+    //$('.index').scrollTop(alphabetScrollTop); //alphabet scroll top
+    indexHighlighter.css('top', alphabetScrollTop);       // set the height of items to take into account the options at the top
+
 });
 
 
