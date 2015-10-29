@@ -37,6 +37,7 @@ hr{
 }
 
 footer hr{
+	margin-top: 0;
 	margin-bottom: 5px;
 }
 
@@ -117,6 +118,10 @@ p.hint {
 	display: none;
 }
 
+.top-border hr{
+	margin-bottom: 0;
+}
+
 h3 {
 	font-size: 1rem;
 }
@@ -164,6 +169,10 @@ ul .arrow.pressed {
   display: inline;
 }
 
+.options-container {
+	padding-top: 1.1875rem;
+}
+
 .options-container-mobile .options {
 	display: none;
     background-color: #E1F8FF;
@@ -179,13 +188,16 @@ ul .arrow.pressed {
     margin-bottom: 5px;
 }
 
+.index{
+	height: 200px;
+	overflow: auto;	
+}
+
 ul.alphabet {
 	list-style: none;
 	font-size: 1.375rem;
-	max-height: 261px;
-	overflow: auto;
 	margin: 0;
-	display: none;
+
 }
 
 .alphabet li{
@@ -231,11 +243,13 @@ ul.list.deletable li:active{
     min-height: 100px;
     /*max-height: 450px;*/
     overflow: auto;
+    padding-top: 1.1875rem;
+
 }
 
 .items li {
-    margin-bottom: 0.4rem;
-    line-height: 1.4;
+	margin-bottom: 0.625rem;
+    line-height: 1.2;
     position: relative;
 }
 

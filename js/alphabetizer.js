@@ -34,7 +34,7 @@ var mininumPositionsFromTop = 2;
 var positionsToSubtract = 2;
 
 // Magical array where everything takes place
-var items = new Array();
+var items = [];
 
 
 //code used for shuffling arrays
@@ -123,7 +123,7 @@ var displayItems = function() {
         scrollToPosition = mostRecentItemPosition - positionsToSubtract;    // subtract (2) positions to give context
     }
     else{                                                                   // otherwise (if there's less than (2) items above it)
-        scrollToPosition = 0                                                // make the scroll target the top
+        scrollToPosition = 0;                                                // make the scroll target the top
     };
 
     if (items.length > 0) {                                         // as long is there is more than 0 items in the list
@@ -135,6 +135,24 @@ var displayItems = function() {
     //$(listContainerHtmlLocation).scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
 };
 
+
+var fireMultiEntryMode = function(modeSwitch){
+    if (modeSwitch === 'enterMode'){
+        $(inputHtmlLocation).addClass('multi-entry');       // Activate multi-entry mode
+        $('.hint-box').removeClass('default');              // de-ctivate default hint
+        $('.hint-box').addClass('multi');                   // Activate multi-entry hint
+        multiEntry = true;                                  // switch multi entry on
+        instantEntry = false;                               // turn off instant entry        
+    };
+    if (modeSwitch === 'leaveMode') {
+        $(inputHtmlLocation).removeClass('multi-entry');    // de-activate multi-entry mode
+        $('.hint-box').removeClass('multi');                // de-activate multi-entry hint
+        $('.hint-box').addClass('default');                 // activate default hint
+        multiEntry = false;                                 // switch it off
+        instantEntry = true;                                 // swich back to instant mode
+        changeListLength();
+    };
+};
 
 
 //grab items from input
@@ -165,22 +183,13 @@ $(inputHtmlLocation).on('keyup', function (event) {     // listen to each keypre
 
     // special cases for certain keys/combos
     //Shift-enter & ctrl-v
-    if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
-    	$(inputHtmlLocation).addClass('multi-entry');       // Activate multi-entry mode
-        $('.hint-box').removeClass('default');              // de-ctivate default hint
-        $('.hint-box').addClass('multi');                   // Activate multi-entry hint
 
-    	multiEntry = true;                                  // switch multi entry on
-        instantEntry = false;                               // turn off instant entry
+    if (event.which === 13 && event.shiftKey || event.which === 86 && (event.ctrlKey || event.metakey)) {     // if shift and enter or ctrl v are pressed
+        fireMultiEntryMode('enterMode');                    // launch multi-entry mode
     }
     //escape
     if (event.which === 27) {                               // if escape is pressed
-        $(inputHtmlLocation).removeClass('multi-entry');    // de-activate multi-entry mode
-        $('.hint-box').removeClass('multi');                // de-activate multi-entry hint
-        $('.hint-box').addClass('default');                 // activate default hint
-        multiEntry = false;                                 // switch it off
-        instantEntry = true                                 // swich back to instant mode
-        var $input = $(event.target);                       // take the reference to the inputbox
+        fireMultiEntryMode('leaveMode');                    // exit multi-entry mode
         $input.val('');                                     // clear the input box completely
     }
 
@@ -193,10 +202,15 @@ $(inputHtmlLocation).on('keyup', function (event) {     // listen to each keypre
             $input.val(' ');                                    // empty the input (space prevents placeholder text from displaying)
             itemsInArray = itemsInArray + itemsSplit.length;    // increase the "official" item count
             itemsSplit.length = 0;                              // empty 
+            changeListLength();                                 // update heights for scrolling the index
         };
     } else {                                                    //  for everything else
         var itemsSplit = itemTrimmed.split(/\r\n|\r|\n/g);      // split at each line break
-        $.merge(items, itemsSplit);                             // add split items to array            
+        if (itemsSplit.length > 1){                             // if there's more than one thing being added it's actually a multi-entry
+            fireMultiEntryMode('enterMode');                    // enter multi-entry mode
+            return                                              //get out of here, it's a trap!
+        }
+        $.merge(items, itemsSplit);                             // add split items to array
         //  items.push(itemTrimmed);// just add trimed items
     }
 
@@ -207,6 +221,7 @@ $(inputHtmlLocation).on('keyup', function (event) {     // listen to each keypre
         itemsInArray = itemsInArray + itemsSplit.length;                            // increase the "official" item count
         itemsSplit.length = 0;                                                      // empty
         $(listHtmlLocation + ' .' + mostRecentItemPosition).removeClass('active');  // remove active class from now inactive item
+        changeListLength();                                                         // update heights for scrolling the index
         activeEntry = false;                                                        // set active to off
     };
     
@@ -274,7 +289,8 @@ $(".shuffle-box").change(function() {       // if shuffle is toggled
 $(".clear-button").click(function(){        // if clear button is clicked
     items.length = 0;                       // clear all data in items array
     itemsInArray = 0;                       // reset itemsInArray variable
-    $(inputHtmlLocation).val('')            // empty the input
+    $(inputHtmlLocation).val('');           // empty the input
+    changeListLength();                     // update heights for scrolling the index
     displayItems();                         // display items
 });
 
@@ -299,7 +315,7 @@ var scrollOptions = function(chosenClass){
         forceHideOptions = false;                                                   // turn force hide off
       };
     //alert(' options have been toggled and chosenClass=' + chosenClass + 'scroll: ' + $(window).scrollTop() + ' thinDisplay: ' + thinDisplay + ' showOptions: ' + showOptions);
-}
+};
 
 $('.options-container .options-head').click(function () {                           // when the options header is clicked
     scrollOptions('options-container');                                             // slide options
@@ -425,13 +441,42 @@ $(window).scroll(function () {
 
 function handleScroll() {
     scrollTimer = null;
-    var optionsTop = 10;
     if (thinDisplay === true && $(window).scrollTop() > 0 && showOptions === true ) {   // if thinDisplay is on and showOptions is true and scrollTop is greater than 0    
         forceHideOptions = true;
         scrollOptions('options-container-mobile');                                      //hide the options
     };
 }
 
+var itemsScrollTop;
+var itemsScrollBottom;
+var alphabetScrollTop;
+var alphabetScrollBottom;
+var itemsInnerHeight;
+var alphabetInnerHeight;
 
+
+
+var changeListLength = function(){
+    itemsInnerHeight = $(listHtmlLocation).height();
+    alphabetInnerHeight = $('.alphabet').height();
+    indexHeight = $('.index').height();
+};
+
+changeListLength();
+
+//linking up the index
+$('.items').on('scroll', function () {
+    itemsScrollTop = $(this).scrollTop();
+    itemsScrollBottom = itemsScrollValue - itemsHeight; 
+
+
+    //var scrollBottom = $(window).scrollTop() + $(window).height();
+    //itemsScrollValue / itemsInnerHeight = x / alphabetInnerHeight
+
+    alphabetScrollTop = ( itemsScrollTop / itemsInnerHeight ) * alphabetInnerHeight; 
+    alphabetScrollBottom = alphabetScrollValue - indexHeight;
+
+    $('.index').scrollTop(alphabetScrollTop); //alphabet scroll top
+});
 
 
