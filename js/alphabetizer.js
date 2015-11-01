@@ -27,6 +27,7 @@ var savedItems = false;
 var inputHtmlLocation = '.css-input';
 var listContainerHtmlLocation = '.items';
 var listHtmlLocation = '.list';
+var indexContainerHtmlLocation = '.index'
 var itemsInArray = 0;
 var mostRecentItem;
 var mostRecentItemPosition;
@@ -127,13 +128,17 @@ var displayItems = function() {
     };
 
     if (items.length > 0) {                                         // as long is there is more than 0 items in the list
-        $(listContainerHtmlLocation).stop(true, true).animate({
-            scrollTop: $('li.' + scrollToPosition).position().top   // Animate scroll to recent item http://stackoverflow.com/a/33114021/1973361
-        }, 500);             
+        scrolling(listContainerHtmlLocation,scrollToPosition);
     };
 
     //$(listContainerHtmlLocation).scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
 };
+
+var scrolling = function(containerToScroll,itemNumberToScrollTo){
+        $(containerToScroll).stop(true, true).animate({
+            scrollTop: $('li.' + itemNumberToScrollTo).position().top   // Animate scroll to item top
+        }, 500);                 
+}
 
 
 var fireMultiEntryMode = function(modeSwitch){
@@ -385,9 +390,11 @@ var responsiveWindow = function(){
 
     if (thinDisplay === true) {                                                         // if mobile width
         $(listContainerHtmlLocation).css('max-height', mobileItemsHeight + 'px');       // set the height of items to take into account the options at the top
+        //$(indexContainerHtmlLocation).css('max-height', mobileItemsHeight + 'px');       // set the height of items to take into account the options at the top
     }
     else{                                                                               // otherwise
         $(listContainerHtmlLocation).css('max-height', itemsHeight + 'px');             // set the height of items accordingly
+        //$(indexContainerHtmlLocation).css('max-height', itemsHeight + 'px');             // set the height of items accordingly
     }
 
 
@@ -463,7 +470,7 @@ var changeListLength = function(){
     indexHeight = $('.index').height();
     itemsViewRatio = itemsHeight / itemsInnerHeight;
     //indexHighlighterHeight = itemsViewRatio * alphabetInnerHeight;
-    indexHighlighterHeight = $('.alphabet .0').height();
+    indexHighlighterHeight = $('.alphabet .index0').height();
     indexHighlighter.css('height', indexHighlighterHeight);       // set the height of items to take into account the options at the top
 
 };
@@ -484,7 +491,7 @@ $('.items').on('scroll', function () {
 
     //$('.index').scrollTop(alphabetScrollTop); //alphabet scroll top
     //indexHighlighter.css('top', alphabetScrollTop);       // set the height of items to take into account the options at the top
-
+    scrollingItems();
 });
 
 
@@ -503,46 +510,104 @@ var moreLength = indexLetters.length;
 var firstWords = [];
 var firstWordPositions = [];
 var indexLetterPosition;
+var indexHtmlElement;
 var matchedLetterTop;
-
+var indexLetterTops = [];
 //provisional re-indexing
 //http://stackoverflow.com/a/10849453/1973361
-for (var i = 0; i < moreLength; i++) {
 
-    function filter(letter) {
-      var results = [];
-      var len = items.length;
-      for (var x = 0; x < len; x++) {
-        if (items[x].indexOf(letter) == 0) results.push(items[x]);
+// loop through the array of items
+for (var i = 0; i < moreLength; i++) {  //loop through the array of items
+
+    function filter(letter) {           //find a letter
+      var results = [];                 // store the results here
+      var len = items.length;           // determine the length of the items array
+      for (var x = 0; x < len; x++) {   // loop through the entire array
+        if (items[x].indexOf(letter) === 0) results.push(items[x]);  // if the selected item starts with the selected letter push it to the results
       }
-      return results;
+      return results;                   //return the results
     }
-    moreResults[i] = filter(indexLetters[i]);
 
+    moreResults[i] = filter(indexLetters[i]);   //store the results (apple, ankle, artificial...) in the array named more results
 
-    firstWords[i] = moreResults[i][0];
-
-    //moreResults[i] = results;
+    firstWords[i] = moreResults[i][0];          //grab the first word (from the list of words starting with a letter -- apple)
 
 };
 
+// loop through the list of first words
 for (var i = 0; i < firstWords.length; i++) {
 
-    firstWordPositions[i] = items.indexOf(firstWords[i]) 
-    indexLetterPosition = i;
+    indexLetterPosition = i;                                // store the current loop position (used to reference the letter in the alphabet)**change this to the letter in the index(procedurally generate the index, don't use the current static one) 
+    firstWordPositions[i] = items.indexOf(firstWords[i])    // search the array for the current "first word"
 
-    $('.items .' + firstWordPositions[i]).attr('id','index' + indexLetterPosition);
+    $('.items .' + firstWordPositions[i]).attr('id','index' + indexLetterPosition); //tag the items in the list with an ID for easy referencing
+    indexHtmlElement = $('#index' + indexLetterPosition);                           //store the curent index position **could be condensed
+    if (indexHtmlElement.length) {                                                  // if there is a word beginning with this letter
+        indexLetterTops[i] = indexHtmlElement.position().top;                       // set where the top of it is currently
+    }
+    else {                                                                          //otherwise
+        indexLetterTops[i] = 'undefined';                                           //just put in undefined as its current position
+    }    
 };
 
-  $(function() {
-    $(".items").on('inview', '[id^=index]', function(event, visible) {
-        if (visible) { 
-        var indexClass = $(this).attr('id');
+/*
+This code is probably incredibly resource intesive. see DOM flashing in chrome
+*/
+$(function() {
+$(".list").on('inview', '[id^=index]', function(event, visible) {
+    if (visible) { 
+    var indexClass = $(this).attr('id');                                //grabs the id for future use
 
-        matchedLetterTop = $('.alphabet .' + indexClass).position().top
-        indexHighlighter.css('top',matchedLetterTop);
+    matchedLetterTop = $('.alphabet .' + indexClass).position().top;    //finds the top position of the corresponding index item
+    fluidHighlighter(matchedLetterTop)                                  //animate the index highlighter
+    }
+});
+});
 
-        }
+// *rotate this array 90 degrees -- https://blog.mariusschulz.com/2013/11/13/advanced-javascript-debugging-with-consoletable
+var indexingArray = [];
+indexingArray[0] = []; //letters
+indexingArray[1] = []; //positions
+
+indexingArray[0] = indexLetters;
+indexingArray[1] = indexLetterTops;
+
+//replace inview 
+var scrollingItems = function(){
+
+    //establish positions of index 
+    //establish range of values on screen
+    //loop through and check if any index items are in there
+    //if there are  3 or less index positions in view and one or more outside of view
+    //scroll the highlighter to the top element
+    //and expand its height to encompass all of those that are visible
+for (var i = indexingArray[0].length - 1; i >= 0; i--) {
+    indexingArray[0][i]
+};
+
+    x <= itemsScrollTop && x >= itemsScrollBottom //then it is in view
+
+    if (itemsScrollTop >= ) {
+        scrolling(listContainerHtmlLocation,scrollToPosition);
+
+    };
+}
+
+
+var fluidHighlighter = function(goTo, height){ //add speed maybe?
+
+    //indexHighlighter.css('top',matchedLetterTop);
+    indexHighlighter.stop(true,true).animate({
+        top: goTo,
+    }, 500, function() {
+    // Animation complete.
+    // animate height now?
+        if (height) {
+            indexHighlighter.stop(true,true).animate({
+                height: height,
+            }, 500);        
+        };
     });
-  });
+
+}
 
