@@ -527,20 +527,22 @@ for (var i = 0; i < moreLength; i++) {
 };
 
 for (var i = 0; i < firstWords.length; i++) {
+
     firstWordPositions[i] = items.indexOf(firstWords[i]) 
     indexLetterPosition = i;
-    $('.items .' + firstWordPositions[i]).addClass('index' + indexLetterPosition);
 
-    $('.items .index' + indexLetterPosition).bind('inview', function(event, visible, visiblePartX) {
-
-      if (visiblePartX === 'both' ) {
-        //$('.alphabet .' + indexLetterPosition)
-        matchedLetterTop = $('.alphabet .' + indexLetterPosition).position().top
-        indexHighlighter.css('top',matchedLetterTop);      
-
-      } else {
-        //$('#visible-part-x, #visible-part-y').html('');
-      }
-    });
-
+    $('.items .' + firstWordPositions[i]).attr('id','index' + indexLetterPosition);
 };
+
+  $(function() {
+    $(".items").on('inview', '[id^=index]', function(event, visible) {
+        if (visible) { 
+        var indexClass = $(this).attr('id');
+
+        matchedLetterTop = $('.alphabet .' + indexClass).position().top
+        indexHighlighter.css('top',matchedLetterTop);
+
+        }
+    });
+  });
+
