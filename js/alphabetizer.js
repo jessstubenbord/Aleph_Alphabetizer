@@ -550,21 +550,6 @@ for (var i = 0; i < firstWords.length; i++) {
     }    
 };
 
-/*
-This code is probably incredibly resource intesive. see DOM flashing in chrome
-*/
-$(function() {
-$(".list").on('inview', '[id^=index]', function(event, visible) {
-    if (visible) { 
-    var indexClass = $(this).attr('id');                                //grabs the id for future use
-
-    matchedLetterTop = $('.alphabet .' + indexClass).position().top;    //finds the top position of the corresponding index item
-    fluidHighlighter(matchedLetterTop)                                  //animate the index highlighter
-    }
-});
-});
-
-// *rotate this array 90 degrees -- https://blog.mariusschulz.com/2013/11/13/advanced-javascript-debugging-with-consoletable
 var indexingArray = [];
 indexingArray[0] = []; //letters
 indexingArray[1] = []; //positions
@@ -575,39 +560,58 @@ indexingArray[1] = indexLetterTops;
 //replace inview 
 var scrollingItems = function(){
 
-    //establish positions of index 
-    //establish range of values on screen
     //loop through and check if any index items are in there
     //if there are  3 or less index positions in view and one or more outside of view
     //scroll the highlighter to the top element
     //and expand its height to encompass all of those that are visible
-for (var i = indexingArray[0].length - 1; i >= 0; i--) {
-    indexingArray[0][i]
+for (var i = 0; i < indexingArray[1].length; i++) {
+    var currentLetterInt = i;
+    var currentLetterTop = indexingArray[1][currentLetterInt];
+    var currentLetter = indexingArray[0][currentLetterInt];
+    var nextLetterInt = currentLetterInt + 1;
+    var nextLetterTop = indexingArray[1][nextLetterInt];
+
+    if (isNaN(currentLetterTop)) { //if the current letter position isn't
+        //problems
+        return;                     //get out of here
+    }
+    while (isNaN(nextLetterTop) && nextLetterInt < indexingArray[1].length ) {
+        //more problems
+        nextLetterInt++;
+        nextLetterTop = indexingArray[1][nextLetterInt];
+    };
+    if (itemsScrollTop < currentLetterTop) {
+        return;
+    }
+    if (itemsScrollTop >= currentLetterTop && itemsScrollTop < nextLetterTop) {
+        var matchedLetterTop = $('.alphabet .index' + currentLetterInt).position().top;    //finds the top position of the corresponding index item
+        fluidHighlighter(matchedLetterTop)                                  //animate the index highlighter
+    };
 };
 
-    x <= itemsScrollTop && x >= itemsScrollBottom //then it is in view
-
-    if (itemsScrollTop >= ) {
-        scrolling(listContainerHtmlLocation,scrollToPosition);
-
-    };
 }
 
+var oldPosition;
+var oldHeight;
 
-var fluidHighlighter = function(goTo, height){ //add speed maybe?
+var fluidHighlighter = function(newPosition, newHeight){ //add speed maybe?
 
-    //indexHighlighter.css('top',matchedLetterTop);
-    indexHighlighter.stop(true,true).animate({
-        top: goTo,
-    }, 500, function() {
-    // Animation complete.
-    // animate height now?
-        if (height) {
+    var runHeight = function() {
+        if ( (newHeight) && newHeight !== oldHeight) {
             indexHighlighter.stop(true,true).animate({
-                height: height,
+                height: newHeight,
             }, 500);        
         };
-    });
+    }
+
+    if (newPosition !== oldPosition) {
+        indexHighlighter.stop(true,true).animate({
+            top: newPosition,
+        }, 500, runHeight());
+    };
+    //indexHighlighter.css('top',matchedLetterTop);
+
+    oldPosition = newPosition
+    oldHeight = newHeight
 
 }
-
