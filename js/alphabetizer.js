@@ -27,7 +27,8 @@ var savedItems = false;
 var inputHtmlLocation = '.css-input';
 var listContainerHtmlLocation = '.items';
 var listHtmlLocation = '.list';
-var indexContainerHtmlLocation = '.index'
+var indexContainerHtmlLocation = '.index-container';
+var indexHtmlLocation = '.index';
 var itemsInArray = 0;
 var mostRecentItem;
 var mostRecentItemPosition;
@@ -128,16 +129,23 @@ var displayItems = function() {
     };
 
     if (items.length > 0) {                                         // as long is there is more than 0 items in the list
-        scrolling(listContainerHtmlLocation,scrollToPosition);
+        scrolling(listContainerHtmlLocation,scrollToPosition,'class');
     };
 
     //$(listContainerHtmlLocation).scrollTop($('li.' + scrollToPosition).position().top);  // scroll to most recent item non-animated
 };
 
-var scrolling = function(containerToScroll,itemNumberToScrollTo){
-        $(containerToScroll).stop(true, true).animate({
-            scrollTop: $('li.' + itemNumberToScrollTo).position().top   // Animate scroll to item top
-        }, 500);                 
+var scrolling = function(containerToScroll,itemNumberToScrollTo,elementType){
+        if (elementType === 'class') {
+            $(containerToScroll).stop(true, true).animate({
+                scrollTop: $('li.' + itemNumberToScrollTo).position().top   // Animate scroll to item top
+            }, 500);                             
+        }
+        if (elementType === 'id') {
+            $(containerToScroll).stop(true, true).animate({
+                scrollTop: $('#' + itemNumberToScrollTo).position().top   // Animate scroll to item top
+            }, 500);            
+        };
 }
 
 
@@ -291,6 +299,15 @@ $(".shuffle-box").change(function() {       // if shuffle is toggled
     }
     displayItems();                         // display items
 });
+$(".index-box").change(function() {     // if deletable is toggled
+    if(this.checked) {                      // on
+        slideIndex('out');
+    }
+    else{                                   // off
+        slideIndex('in');
+    }
+    //displayItems();                         // display items
+});
 $(".clear-button").click(function(){        // if clear button is clicked
     items.length = 0;                       // clear all data in items array
     itemsInArray = 0;                       // reset itemsInArray variable
@@ -390,11 +407,13 @@ var responsiveWindow = function(){
 
     if (thinDisplay === true) {                                                         // if mobile width
         $(listContainerHtmlLocation).css('max-height', mobileItemsHeight + 'px');       // set the height of items to take into account the options at the top
-        //$(indexContainerHtmlLocation).css('max-height', mobileItemsHeight + 'px');       // set the height of items to take into account the options at the top
+        $(indexContainerHtmlLocation).css('max-height', mobileItemsHeight + 'px');       // set the height of items to take into account the options at the top
+        $(indexHtmlLocation).css('max-height', mobileItemsHeight + 'px');       // set the height of items to take into account the options at the top
     }
     else{                                                                               // otherwise
         $(listContainerHtmlLocation).css('max-height', itemsHeight + 'px');             // set the height of items accordingly
-        //$(indexContainerHtmlLocation).css('max-height', itemsHeight + 'px');             // set the height of items accordingly
+        $(indexContainerHtmlLocation).css('max-height', itemsHeight + 'px');       // set the height of items to take into account the options at the top
+        $(indexHtmlLocation).css('max-height', itemsHeight + 'px');             // set the height of items accordingly
     }
 
 
@@ -615,3 +634,31 @@ var fluidHighlighter = function(newPosition, newHeight){ //add speed maybe?
     oldHeight = newHeight
 
 }
+
+var slideIndex = function(slideDirection){
+
+    var removeShadow = function() {
+        $(indexContainerHtmlLocation).removeClass('shadow-right');
+    }    
+    if (slideDirection === 'out') {
+        $(indexHtmlLocation).stop(true,true).animate({
+            left: '',
+        }, 500);
+        $(indexContainerHtmlLocation).addClass('shadow-right')
+    }
+    if (slideDirection === 'in') {
+        $(indexHtmlLocation).stop(true,true).animate({
+            left: 100,
+        }, 500, removeShadow());
+        //setTimeout(removeShadow, 500);
+    };
+}
+
+$(indexHtmlLocation).on('click', 'li', function () {     // on clicking a list item
+    var collectedPosition = $(this).data('indexpos');      // grab the position from the data
+    collectedPosition = 'index' + collectedPosition;
+    scrolling(listContainerHtmlLocation,collectedPosition,'id');
+
+});
+
+

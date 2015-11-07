@@ -189,15 +189,19 @@ ul .arrow.pressed {
 }
 
 .index-container {
-    position: fixed;
+/*    position: fixed;
     top: 70px;
-    right: 10px;
+    right: 10px;*/
+    overflow: hidden;
 }
-.index{
+.index {
 	height: 100%;
-	/*max-height: 200px;*/
+	max-height: 200px;
+	width: 200px;
 	overflow: auto;
 	position: relative;
+	margin-left: 35px;
+	border: 1px solid #ccc;
 }
 
 ul.alphabet {
@@ -209,9 +213,14 @@ ul.alphabet {
 	position: relative;
 }
 
-.alphabet li{
+.alphabet li {
 	/*  border-right: 2px solid #ccc;*/
-	padding-left: 4px;
+	padding-left: 10px;
+}
+
+.alphabet li:hover {
+	background-color: rgba(0,0,0,.05);
+	cursor: pointer;
 }
 
 .alphabet li.active{
@@ -266,7 +275,21 @@ ul.list.deletable li:active{
     padding-top: 1.1875rem;
 
 }
-
+.shadowtop{
+	-webkit-box-shadow: inset -30px 44px 20px -52px rgba(0,0,0,0.75);
+	-moz-box-shadow: inset -30px 44px 20px -52px rgba(0,0,0,0.75);
+	box-shadow: inset -30px 44px 20px -52px rgba(0,0,0,0.75);
+}
+.shadowbottom{
+	-webkit-box-shadow: inset -30px -44px 20px -52px rgba(0,0,0,0.75);
+	-moz-box-shadow: inset -30px -44px 20px -52px rgba(0,0,0,0.75);
+	box-shadow: inset -30px -44px 20px -52px rgba(0,0,0,0.75);
+}
+.shadow-right{
+	-webkit-box-shadow: inset -14px 0px 9px -10px rgba(25,25,25,.1);
+	-moz-box-shadow: inset -14px 0px 9px -10px rgba(25,25,25,.1);
+	box-shadow: inset -14px 0px 9px -10px rgba(25,25,25,.1);
+}
 .items li {
 	margin-bottom: 0.625rem;
     line-height: 1.2;
@@ -339,6 +362,10 @@ ul.list.deletable li:active{
 @media only screen and (min-width: 64.063em) {
 .options-container-mobile {
 	display: none;
+}
+
+.options-container{
+	padding-left: 1.1875rem;
 }
 
 }
