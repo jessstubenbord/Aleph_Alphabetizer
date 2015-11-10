@@ -12,7 +12,7 @@ var shuffleData = false;
 var clearData = false;
 
 //User Interface
-var showOptions = true;
+var showOptions = false;
 var forceHideOptions = false;
 var forceShowOptions = false;
 var showIndex = false;
@@ -76,17 +76,17 @@ var displayItems = function() {
             return a.toLowerCase().localeCompare(b.toLowerCase());  //sort items independent of case
         });                                                         
 
-        $('.alphabet-box').prop( 'checked', true );                 //make sure the option box is checked
+        $('.alphabet-box').iCheck('check');                 //make sure the option box is checked
 	};
 
 	if (shuffleData === true ) {                                    //if shuffle is on
         alphabetizeOn = false;                                      //turn off auto-alphabetize
 		shuffleArray(items);				                        //shuffle data
-        $('.alphabet-box').prop( 'checked', false );                //uncheck alphabetize
-        $('.shuffle-box').prop( 'checked', true );                  //check shuffle box
+        $('.alphabet-box').iCheck('uncheck');                //uncheck alphabetize
+        $('.shuffle-box').iCheck('check');                  //check shuffle box
 	};
     if (shuffleData === false) {                                    //if shuffle is off
-        $('.shuffle-box').prop( 'checked', false );                 //uncheck shuffle box
+        $('.shuffle-box').iCheck('uncheck');                 //uncheck shuffle box
     };
 
 	//if (multiEntry === true) {
@@ -270,44 +270,40 @@ var deleteFunction = function(){
 };
 
 //options Checkbox actions
-$(".deletable-box").change(function() {     // if deletable is toggled
-    if(this.checked) {                      // on
-        deleteOnClick = true;               // switch deletable on
-    }
-    else{                                   // off
-        deleteOnClick = false;              // switch deletable off
-    }
+$('.deletable-box').on('ifChecked', function(event) {
+    deleteOnClick = true;               // switch deletable on
     displayItems();                         // display items
 });
-$(".alphabet-box").change(function() {      // if alphabetize is toggled
-    if(this.checked) {                      // on
-        alphabetizeOn = true;               // switch alphabetize on
-        shuffleData = false;                // switch shuffle off
-    }
-    else{                                   // off
-        alphabetizeOn = false;              // switch alphabetize off
-    }
+$('.deletable-box').on('ifUnchecked', function(event) {
+    deleteOnClick = false;              // switch deletable off
     displayItems();                         // display items
 });
-$(".shuffle-box").change(function() {       // if shuffle is toggled
-    if(this.checked) {                      // on
-        shuffleData = true;                 // switch shuffle on
-        alphabetizeOn = false;              // switch alphabetize off
-    }
-    else{                                   // off
-        shuffleData = false;                // switch shuffle off
-    }
+$('.alphabet-box').on('ifChecked', function(event) {
+    alphabetizeOn = true;               // switch alphabetize on
+    shuffleData = false;                // switch shuffle off
     displayItems();                         // display items
 });
-$(".index-box").change(function() {     // if deletable is toggled
-    if(this.checked) {                      // on
-        slideIndex('out');
-    }
-    else{                                   // off
-        slideIndex('in');
-    }
-    //displayItems();                         // display items
+$('.alphabet-box').on('ifUnchecked', function(event) {
+    alphabetizeOn = false;              // switch alphabetize off
+    displayItems();                         // display items
 });
+$('.shuffle-box').on('ifChecked', function(event) {
+    shuffleData = true;                 // switch shuffle on
+    alphabetizeOn = false;              // switch alphabetize off
+    displayItems();                         // display items
+});
+$('.shuffle-box').on('ifUnchecked', function(event) {
+    shuffleData = false;                // switch shuffle off
+    displayItems();                         // display items
+});
+
+$('.index-box').on('ifChecked', function(event) {
+    slideIndex('out');
+});
+$('.index-box').on('ifUnchecked', function(event) {
+    slideIndex('in');
+});
+
 $(".clear-button").click(function(){        // if clear button is clicked
     items.length = 0;                       // clear all data in items array
     itemsInArray = 0;                       // reset itemsInArray variable
@@ -372,7 +368,7 @@ var windowHeight = $(window).height();                                          
 var windowWidth = $(window).width();                                                    // grab window width
 var mobileOptionsHeight = $('.options-container-mobile .options-head').height() + 10;   // grab height of the mobile options(closed + 5 padding + 5 margin)
 var headerHeight = $('.row.first').height();                                            // grab height of the header
-var topBorderHeight = $('.top-border').height();                                        // grab height of that top bordery thing
+var topBorderHeight = $('.top-border-container').height();                                        // grab height of that top bordery thing
 var footerHeight = $('footer').height();                                                // grab height of the footer
 var itemsHeight = windowHeight - (headerHeight + topBorderHeight + footerHeight);       // calculate available height for the items
 var mobileItemsHeight = itemsHeight - mobileOptionsHeight;
@@ -418,8 +414,8 @@ var responsiveWindow = function(){
 
 
     if (thinDisplay === false && wasThinDisplay === true){      // if coming from mobile size to desktop size
-        showOptions = true;                                     // set show options on
-        forceShowOptions =  true;                               // force show
+        showOptions = false;                                     // set show options on
+        forceShowOptions =  false;                               // force show
         scrollOptions('options-container');                     // the desktop options
     }
 
@@ -439,7 +435,7 @@ $(window).resize(function() {                                                   
     windowWidth = $(window).width();                                                    // reset window width
     mobileOptionsHeight = $('.options-container-mobile .options-head').height() + 10;   // grab height of the mobile options(closed + 5 padding + 5 margin)
     headerHeight = $('.row.first').height();                                            // grab height of the header
-    topBorderHeight = $('.top-border').height();                                        // grab the height of that top divider thing
+    topBorderHeight = $('.top-border-container').height();                                        // grab the height of that top divider thing
     footerHeight = $('footer').height();                                                // grab height of the footer
     itemsHeight = windowHeight - (headerHeight + topBorderHeight + footerHeight);       // calculate available height for the items
     mobileItemsHeight = itemsHeight - mobileOptionsHeight;                              // calculate available including top options

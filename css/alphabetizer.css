@@ -7,7 +7,7 @@ body{
 
 h1, h2, h3, h4, h5, h6 {
 	color: #1C1A23;
-	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+	font-family: Roboto, Arial, sans-serif;
 	font-style: normal;
 	font-weight: normal;
 	line-height: 1.4;
@@ -17,9 +17,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header {
-	padding-top: 60px;
+	padding-top: 30px;
 }
 
+.aleph {
+	color: #00C3FF;
+    font-weight: 300;
+}
+
+.alphabetizer{
+	font-weight: 500;
+}
 
 input {
 	font-size: 1.5rem;
@@ -46,15 +54,16 @@ footer hr{
   	color: #CCCCCC;
 }
 
-button {
+.options button {
 	background-color: #ECECEC;
 	color: #000;
 	border: 1px solid #CCC;
 	padding: 5px 10px;
+	margin: 0;
 	margin-left: 4px;
 }
 
-button:hover, button:focus {
+.options button:hover, button:focus {
 	background-color: #FF7474;
 	outline: none; 
 }
@@ -119,6 +128,7 @@ p.hint {
 }
 
 .top-border hr{
+	margin-top: 0;
 	margin-bottom: 0;
 }
 
@@ -126,14 +136,16 @@ h3 {
 	font-size: 1rem;
 }
 
+.options-container .options-head {
+	margin-bottom: .1rem;
+}
+.options-container .options {
+	margin-bottom: .3rem;
+}
 .options-head, .index-head {
 	cursor: pointer;
-}
-
-.options-head, .index-head {
 	color: #ccc;
 }
-
 
 .black {
 	color: #000;
@@ -169,8 +181,8 @@ ul .arrow.pressed {
   display: inline;
 }
 
-.options-container {
-	padding-top: 1.1875rem;
+.options-container .options {
+	display: none;
 }
 
 .options-container-mobile .options {
@@ -364,8 +376,5 @@ ul.list.deletable li:active{
 	display: none;
 }
 
-.options-container{
-	padding-left: 1.1875rem;
-}
 
 }

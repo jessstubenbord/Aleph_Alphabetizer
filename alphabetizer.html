@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="css/vendor/normalize.css">
 <link rel="stylesheet" type="text/css" href="css/vendor/foundation.css"/>
 <link rel="stylesheet" type="text/css" href="css/alphabetizer.css">
+<link rel="stylesheet" href="css/vendor/icheck/minimal/minimal.css">
 <script src="js/vendor/modernizr.js"></script>
 </head>
 
@@ -27,7 +28,7 @@
     </div>
 <div class="row first">
   <div class="large-8 large-offset-2 columns header text-center">
-    <h1>Alphabetizer</h1>
+    <h1><span class="aleph">Aleph</span><span class="alphabetizer">Alphabetizer</span></h1>
     <textarea class="css-input" placeholder="Enter text here...."></textarea><!--<button class="submit"><strong>!</strong></button>-->
     <div class="hint-box default">
     <p class="hint default">Try hitting shift + enter or pasting in multiple items</p>
@@ -36,8 +37,17 @@
   </div>
 </div>
 
-<div class="row large-collapse">
-
+<div class="row large-collapse top-border-container">
+    <div class="options-container large-9 large-offset-1">
+      <h3 class="options-head"><span class="arrow unpressed"><span class="down">+</span><span class="up">-</span></span><span class="black"> Options </span></h3>
+      <div class="options">
+        <label><input type="checkbox" class="deletable-box" name="box1" value="first_checkbox"> deletable items</label>
+        <label><input type="checkbox" class="alphabet-box" name="box1" value="second_checkbox" checked="checked"> alphabetize</label>
+        <label><input type="checkbox" class="shuffle-box" name="box1" value="third_checkbox"> shuffle</label>
+        <label><input type="checkbox" class="index-box" name="box1" value="fourth_checkbox"> show index</label>
+        <button class="clear-button">clear all entries</button>
+      </div>
+    </div>
   <div class="large-10 large-offset-1 columns top-border end">
   <hr/>
   </div>
@@ -78,19 +88,7 @@
       </div>
     </div>
   </div>
-  <div class="large-2 columns">
-    <div class="options-container">
-      <h3 class="options-head"><span class="arrow pressed"><span class="down">+</span><span class="up">-</span></span><span class="black"> Options </span></h3>
-      <div class="options">
-        <label><input type="checkbox" class="deletable-box" name="box1" value="first_checkbox"> deletable items</label><br>
-        <label><input type="checkbox" class="alphabet-box" name="box1" value="second_checkbox" checked="checked"> alphabetize</label><br>
-        <label><input type="checkbox" class="shuffle-box" name="box1" value="third_checkbox"> shuffle</label><br>
-        <label><input type="checkbox" class="index-box" name="box1" value="fourth_checkbox"> show index</label><br>
-        <button class="clear-button">clear all entries</button>
-      </div>
-    </div>
-  </div>
-  <div class="items large-8 columns end">
+  <div class="items large-offset-1 large-9 columns end">
     <ul class="list">
       <li class="0">Almy, Joannie </li><li class="1">Auclair, Donnette </li><li class="2">Auerbach, Trinh </li><li class="3">Bement, Margeret </li><li class="4">Bryan, Willian </li><li class="5">Bullen, Tempie </li><li class="6">Coppa, Ozella </li><li class="7">Dahlin, Clementina</li><li class="8">Dahlman, Sasha </li><li class="9">Dorfman, Josef </li><li class="10">Heckert, Whitney </li><li class="11">Hendershott, Lida </li><li class="12">Holmes, Ellsworth </li><li class="13">Jaffee, Karlyn </li><li class="14">Joslyn, Nora </li><li class="15">Kiley, Patrica </li><li class="16">Lakes, Mickie </li><li class="17">Leiker, Enola</li><li class="18">Lemaire, Shanel, </li><li class="19">Lingerfelt, Graham </li><li class="20">Mangum, Maile </li><li class="21">Marcinkowski, Monica </li><li class="22">Mcraney, Allyson </li><li class="23">Meyerson, Lura </li><li class="24">Mole, Eboni </li><li class="25">Paulsen, Merrie </li><li class="26">Preble, Rivka </li><li class="27">Privette, Vonnie </li><li class="28">Quinones, Tilda </li><li class="29">Rojo, Eloy </li><li class="30">Semple, Dwana </li><li class="31">Sifuentes, Tyron </li><li class="32">Sloat, Dante </li><li class="33">Slocum, Shanna </li><li class="34">Sly, Ellamae </li><li class="35">Stolp, Courtney </li><li class="36">Till, Lucien </li><li class="37">Ulman, Jennifer </li><li class="38">Wadlow, Cassandra </li><li class="39">Zellars, Marty </li>
     </ul>
@@ -106,8 +104,17 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script>if (!window.jQuery) { document.write('<script src="js/vendor/jquery.js"><\/script>'); }
 </script>
-<script src="js/vendor/jquery.inview.min.js"></script>
+<script src="js/vendor/icheck.js"></script>
 <script src="js/alphabetizer.js"></script>
+<script>
+$(document).ready(function(){
+  $('input').iCheck({
+    checkboxClass: 'icheckbox_minimal',
+    radioClass: 'iradio_minimal',
+    inheritClass: true,
+  });
+});
+</script>
 </body>
 </html>
 
