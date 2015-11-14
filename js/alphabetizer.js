@@ -15,6 +15,7 @@ var clearData = false;
 var showOptions = false;
 var forceHideOptions = false;
 var forceShowOptions = false;
+var indexingOn = false;
 var showIndex = false;
 
 
@@ -303,11 +304,15 @@ $('.shuffle-box').on('ifUnchecked', function(event) {
     shuffleData = false;                // switch shuffle off
     displayItems();                         // display items
 });
-
 $('.index-box').on('ifChecked', function(event) {
+    indexingOn = true;
     slideIndex('out');
+    displayItems();
+    changeListLength();
+    reIndexing();
 });
 $('.index-box').on('ifUnchecked', function(event) {
+    indexingOn = false;
     slideIndex('in');
 });
 
@@ -536,82 +541,83 @@ indexingArray[1] = []; //positions
 //http://stackoverflow.com/a/10849453/1973361
 
 var reIndexing = function () {
+    if (indexingOn === true) {
+        numberOfIndexLetters = indexLetters.length;
 
-    numberOfIndexLetters = indexLetters.length;
+        // loop through the array of items
+        for (var i = 0; i < numberOfIndexLetters; i++) {  //loop through the array of items
 
-    // loop through the array of items
-    for (var i = 0; i < numberOfIndexLetters; i++) {  //loop through the array of items
+            function filter(letter) {           //find a letter
+              var results = [];                 // store the results here
+              var len = items.length;           // determine the length of the items array
+              for (var x = 0; x < len; x++) {   // loop through the entire array
+                if (items[x].indexOf(letter) === 0) results.push(items[x]);  // if the selected item starts with the selected letter push it to the results
+              }
+              return results;                   //return the results
+            }
 
-        function filter(letter) {           //find a letter
-          var results = [];                 // store the results here
-          var len = items.length;           // determine the length of the items array
-          for (var x = 0; x < len; x++) {   // loop through the entire array
-            if (items[x].indexOf(letter) === 0) results.push(items[x]);  // if the selected item starts with the selected letter push it to the results
-          }
-          return results;                   //return the results
-        }
+            alphabeticallySeparated[i] = filter(indexLetters[i]);   //store the results (apple, ankle, artificial...) in the array
 
-        alphabeticallySeparated[i] = filter(indexLetters[i]);   //store the results (apple, ankle, artificial...) in the array
+            firstWords[i] = alphabeticallySeparated[i][0];          //grab the first word (from the list of words starting with a letter -- apple)
 
-        firstWords[i] = alphabeticallySeparated[i][0];          //grab the first word (from the list of words starting with a letter -- apple)
+        };
 
+        // loop through the list of first words
+        for (var i = 0; i < firstWords.length; i++) {
+
+            indexLetterPosition = i;                                // store the current loop position (used to reference the letter in the alphabet)**change this to the letter in the index(procedurally generate the index, don't use the current static one) 
+            firstWordPositions[i] = items.indexOf(firstWords[i])    // search the array for the current "first word"
+
+            $('.items .' + firstWordPositions[i]).attr('id','index' + indexLetterPosition); //tag the items in the list with an ID for easy referencing
+            indexHtmlElement = $('#index' + indexLetterPosition);                           //store the curent index position **could be condensed
+            if (indexHtmlElement.length) {                                                  // if there is a word beginning with this letter
+                indexLetterTops[i] = indexHtmlElement.position().top;                       // set where the top of it is currently
+            }
+            else {                                                                          //otherwise
+                indexLetterTops[i] = 'undefined';                                           //just put in undefined as its current position
+            }    
+        };
+
+        indexingArray[0] = indexLetters;
+        indexingArray[1] = indexLetterTops;
     };
-
-    // loop through the list of first words
-    for (var i = 0; i < firstWords.length; i++) {
-
-        indexLetterPosition = i;                                // store the current loop position (used to reference the letter in the alphabet)**change this to the letter in the index(procedurally generate the index, don't use the current static one) 
-        firstWordPositions[i] = items.indexOf(firstWords[i])    // search the array for the current "first word"
-
-        $('.items .' + firstWordPositions[i]).attr('id','index' + indexLetterPosition); //tag the items in the list with an ID for easy referencing
-        indexHtmlElement = $('#index' + indexLetterPosition);                           //store the curent index position **could be condensed
-        if (indexHtmlElement.length) {                                                  // if there is a word beginning with this letter
-            indexLetterTops[i] = indexHtmlElement.position().top;                       // set where the top of it is currently
-        }
-        else {                                                                          //otherwise
-            indexLetterTops[i] = 'undefined';                                           //just put in undefined as its current position
-        }    
-    };
-
-    indexingArray[0] = indexLetters;
-    indexingArray[1] = indexLetterTops;
 }
 
 
 //replacing inview 
 //fires every single time items is scrolled
 var scrollingItems = function(){
+    if (indexingOn === true) {
+        //loop through and check if any index items are in there
+        ///if there are  3 or less index positions in view and one or more outside of view
+        //scroll the highlighter to the top element
+        ///and expand its height to encompass all of those that are visible
+        for (var i = 0; i < indexingArray[1].length; i++) {
+            var currentLetterInt = i;
+            var currentLetterTop = indexingArray[1][currentLetterInt];
+            var currentLetter = indexingArray[0][currentLetterInt];
+            var nextLetterInt = currentLetterInt + 1;
+            var nextLetterTop = indexingArray[1][nextLetterInt];
 
-    //loop through and check if any index items are in there
-    ///if there are  3 or less index positions in view and one or more outside of view
-    //scroll the highlighter to the top element
-    ///and expand its height to encompass all of those that are visible
-    for (var i = 0; i < indexingArray[1].length; i++) {
-        var currentLetterInt = i;
-        var currentLetterTop = indexingArray[1][currentLetterInt];
-        var currentLetter = indexingArray[0][currentLetterInt];
-        var nextLetterInt = currentLetterInt + 1;
-        var nextLetterTop = indexingArray[1][nextLetterInt];
-
-        if (isNaN(currentLetterTop)) { //if the current letter position isn't
-            //problems
-            return;                     //get out of here
-        }
-        while (isNaN(nextLetterTop) && nextLetterInt < indexingArray[1].length ) {  // while the nex letter doesn't exist and there are still letters to go
-            //more problems
-            nextLetterInt++;                                                        // increment to the next letter
-            nextLetterTop = indexingArray[1][nextLetterInt];                        // 
+            if (isNaN(currentLetterTop)) { //if the current letter position isn't
+                //problems
+                return;                     //get out of here
+            }
+            while (isNaN(nextLetterTop) && nextLetterInt < indexingArray[1].length ) {  // while the nex letter doesn't exist and there are still letters to go
+                //more problems
+                nextLetterInt++;                                                        // increment to the next letter
+                nextLetterTop = indexingArray[1][nextLetterInt];                        // 
+            };
+            if (itemsScrollTop < currentLetterTop) {        // if the scroll position is above the letter currently being looped
+                return;                                     // run away
+            }
+            if (itemsScrollTop >= currentLetterTop && itemsScrollTop < nextLetterTop) {             // if the scroll position is at or below the letter being looped and above the next letter(necessary?)
+                var matchedLetterTop = $('.alphabet .index' + currentLetterInt).position().top;     // find the top position of the corresponding index item
+                fluidHighlighter(matchedLetterTop)                                                  // animate the index highlighter
+            };
+            //add an else which catches things that fall out the bottom
         };
-        if (itemsScrollTop < currentLetterTop) {        // if the scroll position is above the letter currently being looped
-            return;                                     // run away
-        }
-        if (itemsScrollTop >= currentLetterTop && itemsScrollTop < nextLetterTop) {             // if the scroll position is at or below the letter being looped and above the next letter(necessary?)
-            var matchedLetterTop = $('.alphabet .index' + currentLetterInt).position().top;     // find the top position of the corresponding index item
-            fluidHighlighter(matchedLetterTop)                                                  // animate the index highlighter
-        };
-        //add an else which catches things that fall out the bottom
     };
-
 }
 
 var oldPosition;

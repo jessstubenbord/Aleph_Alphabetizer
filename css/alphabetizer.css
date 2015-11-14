@@ -212,6 +212,7 @@ ul .arrow.pressed {
 	width: 200px;
 	overflow: auto;
 	position: relative;
+	left: 100px;
 	margin-left: 35px;
 	border: 1px solid #ccc;
 }
